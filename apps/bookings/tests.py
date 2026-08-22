@@ -1,0 +1,102 @@
+from datetime import timedelta
+
+from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from apps.base.choices import BookingStatus, UserRole
+from apps.bookings.models import Booking
+from apps.listing.models import Listing
+from apps.users.models import User
+
+
+class BookingAPITests(APITestCase):
+    def setUp(self):
+        self.tenant = User.objects.create_user(
+            email="tenant@example.com",
+            password="StrongPass123!",
+            name="Tenant",
+            role=UserRole.TENANT,
+        )
+        self.landlord = User.objects.create_user(
+            email="landlord@example.com",
+            password="StrongPass123!",
+            name="Landlord",
+            role=UserRole.LANDLORD,
+        )
+        self.listing = Listing.objects.create(
+            owner=self.landlord,
+            title="Berlin flat",
+            description="Nice apartment",
+            city="Berlin",
+            district="Mitte",
+            price="1200.00",
+            rooms="2.5",
+            housing_type="apartment",
+        )
+
+    def test_tenant_can_create_booking_and_landlord_can_confirm_it(self):
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/bookings/",
+            self._booking_payload(),
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        booking = Booking.objects.get()
+        self.assertEqual(booking.tenant, self.tenant)
+        self.assertEqual(booking.status, BookingStatus.PENDING)
+
+        self.client.force_authenticate(user=self.landlord)
+        confirm_response = self.client.post(f"/api/v1/bookings/{booking.id}/confirm/")
+
+        self.assertEqual(confirm_response.status_code, status.HTTP_200_OK)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, BookingStatus.CONFIRMED)
+
+    def test_landlord_cannot_create_booking(self):
+        self.client.force_authenticate(user=self.landlord)
+
+        response = self.client.post(
+            "/api/v1/bookings/",
+            self._booking_payload(),
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_overlapping_booking_is_rejected(self):
+        start_date = timezone.localdate() + timedelta(days=10)
+        end_date = start_date + timedelta(days=3)
+        Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=start_date,
+            end_date=end_date,
+            status=BookingStatus.CONFIRMED,
+        )
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/bookings/",
+            {
+                "listing": self.listing.id,
+                "start_date": start_date + timedelta(days=1),
+                "end_date": end_date + timedelta(days=1),
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def _booking_payload(self):
+        start_date = timezone.localdate() + timedelta(days=10)
+        end_date = start_date + timedelta(days=3)
+
+        return {
+            "listing": self.listing.id,
+            "start_date": start_date,
+            "end_date": end_date,
+        }

@@ -1,0 +1,6 @@
+[tool.ruff]
+line-length = 88
+extend-exclude = ["**/migrations/*.py"]
+
+[tool.ruff.lint]
+ignore = ["RUF012"]
