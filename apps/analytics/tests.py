@@ -44,5 +44,24 @@ class AnalyticsAPITests(APITestCase):
         response = self.client.get("/api/v1/analytics/popular-listings/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]["id"], self.listing.id)
-        self.assertEqual(response.data[0]["views_count"], 1)
+        self.assertEqual(response.data["results"][0]["id"], self.listing.id)
+        self.assertEqual(response.data["results"][0]["views_count"], 1)
+
+    def test_authenticated_user_can_get_own_searches_and_views(self):
+        tenant = User.objects.create_user(
+            email="tenant@example.com",
+            password="StrongPass123!",
+            name="Tenant",
+            role=UserRole.TENANT,
+        )
+        SearchQuery.objects.create(user=tenant, keyword="berlin")
+        ListingView.objects.create(user=tenant, listing=self.listing)
+        self.client.force_authenticate(user=tenant)
+
+        searches_response = self.client.get("/api/v1/analytics/my-searches/")
+        views_response = self.client.get("/api/v1/analytics/my-views/")
+
+        self.assertEqual(searches_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(views_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(searches_response.data["count"], 1)
+        self.assertEqual(views_response.data["count"], 1)

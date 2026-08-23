@@ -19,6 +19,13 @@ Base path:
 /api/v1/
 ```
 
+API documentation:
+
+```text
+GET /api/schema/
+GET /api/docs/
+```
+
 Auth:
 
 ```text
@@ -37,6 +44,7 @@ POST   /api/v1/listings/
 GET    /api/v1/listings/<id>/
 PATCH  /api/v1/listings/<id>/
 DELETE /api/v1/listings/<id>/
+GET    /api/v1/listings/my/
 POST   /api/v1/listings/<id>/images/
 GET    /api/v1/listings/<id>/reviews/
 ```
@@ -47,6 +55,7 @@ Bookings:
 GET  /api/v1/bookings/
 POST /api/v1/bookings/
 GET  /api/v1/bookings/<id>/
+GET  /api/v1/bookings/my/
 POST /api/v1/bookings/<id>/confirm/
 POST /api/v1/bookings/<id>/reject/
 POST /api/v1/bookings/<id>/cancel/

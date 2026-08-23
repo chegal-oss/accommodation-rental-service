@@ -55,6 +55,18 @@ class BookingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(tenant=self.request.user)
 
+    @action(detail=False, methods=["get"], url_path="my")
+    def my_bookings(self, request):
+        bookings = self.get_queryset().filter(tenant=request.user)
+        page = self.paginate_queryset(bookings)
+
+        if page is not None:
+            serializer = BookingListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = BookingListSerializer(bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @action(detail=True, methods=["post"], url_path="confirm")
     def confirm(self, request, pk=None):
         booking = self.get_object()

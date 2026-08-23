@@ -72,6 +72,50 @@ class ReviewAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_review_cannot_be_created_for_active_booking(self):
+        booking = Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=timezone.localdate() + timedelta(days=1),
+            end_date=timezone.localdate() + timedelta(days=4),
+            status=BookingStatus.CONFIRMED,
+        )
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/reviews/",
+            {
+                "listing": self.listing.id,
+                "booking": booking.id,
+                "rating": 5,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_review_cannot_be_created_twice_for_same_booking(self):
+        booking = self._completed_booking()
+        Review.objects.create(
+            listing=self.listing,
+            user=self.tenant,
+            booking=booking,
+            rating=5,
+        )
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/reviews/",
+            {
+                "listing": self.listing.id,
+                "booking": booking.id,
+                "rating": 4,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def _completed_booking(self):
         end_date = timezone.localdate() - timedelta(days=1)
         start_date = end_date - timedelta(days=3)

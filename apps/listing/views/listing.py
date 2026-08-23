@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.analytics.models import ListingView, SearchQuery
@@ -116,3 +117,24 @@ class ListingViewSet(viewsets.ModelViewSet):
             ReviewListSerializer(reviews, many=True).data,
             status=status.HTTP_200_OK,
         )
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="my",
+        permission_classes=[IsAuthenticated],
+    )
+    def my_listings(self, request):
+        listings = (
+            self.get_queryset()
+            .filter(owner=request.user)
+            .order_by("-created_at")
+        )
+        page = self.paginate_queryset(listings)
+
+        if page is not None:
+            serializer = ListingListSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = ListingListSerializer(listings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

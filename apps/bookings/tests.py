@@ -24,6 +24,12 @@ class BookingAPITests(APITestCase):
             name="Landlord",
             role=UserRole.LANDLORD,
         )
+        self.other_landlord = User.objects.create_user(
+            email="other-landlord@example.com",
+            password="StrongPass123!",
+            name="Other Landlord",
+            role=UserRole.LANDLORD,
+        )
         self.listing = Listing.objects.create(
             owner=self.landlord,
             title="Berlin flat",
@@ -66,6 +72,35 @@ class BookingAPITests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_landlord_cannot_confirm_other_landlord_booking(self):
+        booking = Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=timezone.localdate() + timedelta(days=10),
+            end_date=timezone.localdate() + timedelta(days=13),
+        )
+        self.client.force_authenticate(user=self.other_landlord)
+
+        response = self.client.post(f"/api/v1/bookings/{booking.id}/confirm/")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        booking.refresh_from_db()
+        self.assertEqual(booking.status, BookingStatus.PENDING)
+
+    def test_tenant_can_get_own_bookings(self):
+        Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=timezone.localdate() + timedelta(days=10),
+            end_date=timezone.localdate() + timedelta(days=13),
+        )
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.get("/api/v1/bookings/my/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
 
     def test_overlapping_booking_is_rejected(self):
         start_date = timezone.localdate() + timedelta(days=10)
