@@ -1,0 +1,330 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-23 09:21+0000\n"
+"PO-Revision-Date: 2026-08-23 00:00+0000\n"
+"Last-Translator: Codex <noreply@example.com>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: apps/analytics/models/listing_view.py:16
+#: apps/analytics/models/search_query.py:15 apps/reviews/models/review.py:23
+#: apps/users/models.py:36
+msgid "user"
+msgstr "Benutzer"
+
+#: apps/analytics/models/listing_view.py:22 apps/bookings/models/booking.py:16
+#: apps/listing/models/listing.py:42 apps/listing/models/listing_image.py:15
+#: apps/reviews/models/review.py:17
+msgid "listing"
+msgstr "Anzeige"
+
+#: apps/analytics/models/listing_view.py:26
+msgid "listing view"
+msgstr "Anzeigenaufruf"
+
+#: apps/analytics/models/listing_view.py:27
+msgid "listing views"
+msgstr "Anzeigenaufrufe"
+
+#: apps/analytics/models/search_query.py:17
+msgid "keyword"
+msgstr "Suchbegriff"
+
+#: apps/analytics/models/search_query.py:20
+msgid "search query"
+msgstr "Suchanfrage"
+
+#: apps/analytics/models/search_query.py:21
+msgid "search queries"
+msgstr "Suchanfragen"
+
+#: apps/base/base.py:7
+msgid "created at"
+msgstr "erstellt am"
+
+#: apps/base/base.py:8
+msgid "updated at"
+msgstr "aktualisiert am"
+
+#: apps/base/base.py:15
+msgid "deleted at"
+msgstr "gelöscht am"
+
+#: apps/base/choices.py:6
+msgid "Tenant"
+msgstr "Mieter"
+
+#: apps/base/choices.py:7
+msgid "Landlord"
+msgstr "Vermieter"
+
+#: apps/base/choices.py:11
+msgid "Apartment"
+msgstr "Wohnung"
+
+#: apps/base/choices.py:12
+msgid "House"
+msgstr "Haus"
+
+#: apps/base/choices.py:13
+msgid "Studio"
+msgstr "Studio"
+
+#: apps/base/choices.py:14
+msgid "Room"
+msgstr "Zimmer"
+
+#: apps/base/choices.py:15
+msgid "Other"
+msgstr "Sonstiges"
+
+#: apps/base/choices.py:19
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: apps/base/choices.py:20
+msgid "Confirmed"
+msgstr "Bestätigt"
+
+#: apps/base/choices.py:21
+msgid "Rejected"
+msgstr "Abgelehnt"
+
+#: apps/base/choices.py:22
+msgid "Cancelled"
+msgstr "Storniert"
+
+#: apps/base/validators.py:7
+msgid "Enter a valid phone number. It may contain digits, spaces, hyphens, parentheses and an optional leading plus sign."
+msgstr "Geben Sie eine gültige Telefonnummer ein. Sie darf Ziffern, Leerzeichen, Bindestriche, Klammern und ein optionales Pluszeichen am Anfang enthalten."
+
+#: apps/bookings/models/booking.py:22
+msgid "tenant"
+msgstr "Mieter"
+
+#: apps/bookings/models/booking.py:24
+msgid "start date"
+msgstr "Startdatum"
+
+#: apps/bookings/models/booking.py:25
+msgid "end date"
+msgstr "Enddatum"
+
+#: apps/bookings/models/booking.py:27
+msgid "status"
+msgstr "Status"
+
+#: apps/bookings/models/booking.py:34 apps/reviews/models/review.py:29
+msgid "booking"
+msgstr "Buchung"
+
+#: apps/bookings/models/booking.py:35
+msgid "bookings"
+msgstr "Buchungen"
+
+#: apps/bookings/models/booking.py:47 apps/bookings/serializers/booking.py:75
+msgid "End date must be later than start date."
+msgstr "Das Enddatum muss nach dem Startdatum liegen."
+
+#: apps/bookings/models/booking.py:65 apps/bookings/serializers/booking.py:89
+msgid "This listing is already booked for these dates."
+msgstr "Diese Anzeige ist für diese Daten bereits gebucht."
+
+#: apps/bookings/serializers/booking.py:62
+msgid "This listing is not active."
+msgstr "Diese Anzeige ist nicht aktiv."
+
+#: apps/bookings/serializers/booking.py:65
+msgid "You cannot book your own listing."
+msgstr "Sie können Ihre eigene Anzeige nicht buchen."
+
+#: apps/bookings/views/booking.py:103
+msgid "You can cancel only your own bookings."
+msgstr "Sie können nur Ihre eigenen Buchungen stornieren."
+
+#: apps/bookings/views/booking.py:106
+msgid "Booking can be cancelled only before start date."
+msgstr "Die Buchung kann nur vor dem Startdatum storniert werden."
+
+#: apps/bookings/views/booking.py:110
+msgid "Only pending or confirmed bookings can be cancelled."
+msgstr "Nur ausstehende oder bestätigte Buchungen können storniert werden."
+
+#: apps/bookings/views/booking.py:126
+msgid "You can manage only bookings for your listings."
+msgstr "Sie können nur Buchungen für Ihre eigenen Anzeigen verwalten."
+
+#: apps/bookings/views/booking.py:130
+msgid "Only pending bookings can be changed."
+msgstr "Nur ausstehende Buchungen können geändert werden."
+
+#: apps/listing/models/listing.py:15
+msgid "owner"
+msgstr "Eigentümer"
+
+#: apps/listing/models/listing.py:17
+msgid "title"
+msgstr "Titel"
+
+#: apps/listing/models/listing.py:18
+msgid "description"
+msgstr "Beschreibung"
+
+#: apps/listing/models/listing.py:19
+msgid "city"
+msgstr "Stadt"
+
+#: apps/listing/models/listing.py:20
+msgid "district"
+msgstr "Stadtteil"
+
+#: apps/listing/models/listing.py:22
+msgid "price"
+msgstr "Preis"
+
+#: apps/listing/models/listing.py:28
+msgid "rooms"
+msgstr "Zimmer"
+
+#: apps/listing/models/listing.py:34
+msgid "housing type"
+msgstr "Wohnungstyp"
+
+#: apps/listing/models/listing.py:39 apps/users/models.py:27
+msgid "active"
+msgstr "aktiv"
+
+#: apps/listing/models/listing.py:43
+msgid "listings"
+msgstr "Anzeigen"
+
+#: apps/listing/models/listing_image.py:17
+msgid "image"
+msgstr "Bild"
+
+#: apps/listing/models/listing_image.py:18
+msgid "position"
+msgstr "Position"
+
+#: apps/listing/models/listing_image.py:21
+msgid "listing image"
+msgstr "Anzeigenbild"
+
+#: apps/listing/models/listing_image.py:22
+msgid "listing images"
+msgstr "Anzeigenbilder"
+
+#: apps/listing/models/listing_image.py:39
+msgid "A listing can have no more than 6 images."
+msgstr "Eine Anzeige darf höchstens 6 Bilder haben."
+
+#: apps/listing/serializers/listing_image.py:15
+#, python-format
+msgid "A listing can have no more than %(max_images)s images."
+msgstr "Eine Anzeige darf höchstens %(max_images)s Bilder haben."
+
+#: apps/listing/views/listing_image.py:28
+msgid "You can add images only to your own listings."
+msgstr "Sie können Bilder nur zu Ihren eigenen Anzeigen hinzufügen."
+
+#: apps/reviews/models/review.py:32
+msgid "rating"
+msgstr "Bewertung"
+
+#: apps/reviews/models/review.py:38
+msgid "comment"
+msgstr "Kommentar"
+
+#: apps/reviews/models/review.py:41
+msgid "review"
+msgstr "Rezension"
+
+#: apps/reviews/models/review.py:42
+msgid "reviews"
+msgstr "Rezensionen"
+
+#: apps/reviews/serializers/review.py:70
+msgid "Listing cannot be changed."
+msgstr "Die Anzeige kann nicht geändert werden."
+
+#: apps/reviews/serializers/review.py:73
+msgid "Booking cannot be changed."
+msgstr "Die Buchung kann nicht geändert werden."
+
+#: apps/reviews/serializers/review.py:79
+msgid "You cannot review your own listing."
+msgstr "Sie können Ihre eigene Anzeige nicht bewerten."
+
+#: apps/reviews/serializers/review.py:83
+msgid "You can review only your own booking."
+msgstr "Sie können nur Ihre eigene Buchung bewerten."
+
+#: apps/reviews/serializers/review.py:88
+msgid "Booking does not belong to this listing."
+msgstr "Die Buchung gehört nicht zu dieser Anzeige."
+
+#: apps/reviews/serializers/review.py:93
+msgid "Only confirmed bookings can be reviewed."
+msgstr "Nur bestätigte Buchungen können bewertet werden."
+
+#: apps/reviews/serializers/review.py:98
+msgid "Booking must be completed before review."
+msgstr "Die Buchung muss abgeschlossen sein, bevor eine Bewertung abgegeben wird."
+
+#: apps/users/admin.py:17
+msgid "Personal info"
+msgstr "Persönliche Informationen"
+
+#: apps/users/admin.py:18
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: apps/users/admin.py:19
+msgid "Important dates"
+msgstr "Wichtige Daten"
+
+#: apps/users/managers.py:10
+msgid "Email is required."
+msgstr "E-Mail ist erforderlich."
+
+#: apps/users/managers.py:26
+msgid "Superuser must have is_staff=True."
+msgstr "Der Superuser muss is_staff=True haben."
+
+#: apps/users/managers.py:29
+msgid "Superuser must have is_superuser=True."
+msgstr "Der Superuser muss is_superuser=True haben."
+
+#: apps/users/models.py:13
+msgid "email address"
+msgstr "E-Mail-Adresse"
+
+#: apps/users/models.py:14
+msgid "name"
+msgstr "Name"
+
+#: apps/users/models.py:16
+msgid "phone"
+msgstr "Telefon"
+
+#: apps/users/models.py:22
+msgid "role"
+msgstr "Rolle"
+
+#: apps/users/models.py:28
+msgid "staff status"
+msgstr "Mitarbeiterstatus"
+
+#: apps/users/models.py:37
+msgid "users"
+msgstr "Benutzer"
