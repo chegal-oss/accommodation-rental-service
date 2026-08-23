@@ -189,8 +189,8 @@ Compose runs three services:
 - `app`: one Docker image with the React build, Django, Gunicorn, migrations and
   static collection on startup.
 - `db`: minimal MySQL 8.4 with `utf8mb4`.
-- `caddy`: public entrypoint on ports `80` and `443`, reverse proxying Django and
-  serving `/static/` and `/media/` from shared volumes.
+- `caddy`: public entrypoint, reverse proxying Django and serving `/static/` and
+  `/media/` from shared volumes.
 
 Create Docker env values:
 
@@ -206,6 +206,10 @@ DOCKER_SECRET_KEY=<strong-secret>
 DOCKER_ALLOWED_HOSTS=example.com
 DOCKER_CSRF_TRUSTED_ORIGINS=https://example.com
 DOCKER_CADDY_SITE_ADDRESS=example.com
+DOCKER_HTTP_PORT=80
+DOCKER_HTTPS_PORT=443
+DOCKER_SESSION_COOKIE_SECURE=True
+DOCKER_CSRF_COOKIE_SECURE=True
 DOCKER_MYSQL_PASSWORD=<strong-password>
 DOCKER_MYSQL_ROOT_PASSWORD=<strong-root-password>
 ```
@@ -223,6 +227,19 @@ docker compose --env-file .env.docker exec app python manage.py createsuperuser
 docker compose --env-file .env.docker exec app python manage.py seed_demo
 docker compose --env-file .env.docker down
 ```
+
+To create a Django admin user automatically during container startup, set:
+
+```text
+DOCKER_SUPERUSER_EMAIL=admin@example.com
+DOCKER_SUPERUSER_PASSWORD=<strong-admin-password>
+DOCKER_SUPERUSER_NAME=Admin
+DOCKER_SUPERUSER_PHONE=
+DOCKER_SUPERUSER_ROLE=landlord
+```
+
+The startup command is idempotent: if this user already exists, it will not
+create a duplicate.
 
 To load demo data automatically on container startup:
 

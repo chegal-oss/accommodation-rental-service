@@ -18,6 +18,11 @@ services:
       MYSQL_HOST: db
       MYSQL_PORT: 3306
       LOG_LEVEL: ${DOCKER_LOG_LEVEL:-INFO}
+      DJANGO_SUPERUSER_EMAIL: ${DOCKER_SUPERUSER_EMAIL:-}
+      DJANGO_SUPERUSER_PASSWORD: ${DOCKER_SUPERUSER_PASSWORD:-}
+      DJANGO_SUPERUSER_NAME: ${DOCKER_SUPERUSER_NAME:-Admin}
+      DJANGO_SUPERUSER_PHONE: ${DOCKER_SUPERUSER_PHONE:-}
+      DJANGO_SUPERUSER_ROLE: ${DOCKER_SUPERUSER_ROLE:-landlord}
       SEED_DEMO: ${DOCKER_SEED_DEMO:-False}
     volumes:
       - staticfiles:/app/staticfiles
@@ -50,10 +55,10 @@ services:
     image: caddy:2.10-alpine
     restart: unless-stopped
     environment:
-      CADDY_SITE_ADDRESS: ${DOCKER_CADDY_SITE_ADDRESS:-localhost}
+      CADDY_SITE_ADDRESS: ${DOCKER_CADDY_SITE_ADDRESS:-:80}
     ports:
-      - "80:80"
-      - "443:443"
+      - "${DOCKER_HTTP_PORT:-80}:80"
+      - "${DOCKER_HTTPS_PORT:-443}:443"
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - staticfiles:/srv/static:ro

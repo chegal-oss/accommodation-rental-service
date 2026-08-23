@@ -24,6 +24,7 @@ fi
 
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
+python manage.py ensure_superuser
 
 if [ "${SEED_DEMO}" = "True" ] || [ "${SEED_DEMO}" = "true" ] || [ "${SEED_DEMO}" = "1" ]; then
   python manage.py seed_demo
