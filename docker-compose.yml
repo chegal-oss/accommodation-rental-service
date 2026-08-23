@@ -1,0 +1,71 @@
+services:
+  app:
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${DOCKER_SECRET_KEY:-change-me-in-production}
+      DEBUG: ${DOCKER_DEBUG:-False}
+      ALLOWED_HOSTS: ${DOCKER_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      CSRF_TRUSTED_ORIGINS: ${DOCKER_CSRF_TRUSTED_ORIGINS:-http://localhost,https://localhost}
+      USE_X_FORWARDED_HOST: ${DOCKER_USE_X_FORWARDED_HOST:-True}
+      SESSION_COOKIE_SECURE: ${DOCKER_SESSION_COOKIE_SECURE:-True}
+      CSRF_COOKIE_SECURE: ${DOCKER_CSRF_COOKIE_SECURE:-True}
+      USE_MYSQL: "True"
+      MYSQL_DATABASE: ${DOCKER_MYSQL_DATABASE:-homerent}
+      MYSQL_USER: ${DOCKER_MYSQL_USER:-homerent}
+      MYSQL_PASSWORD: ${DOCKER_MYSQL_PASSWORD:-homerent_password}
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306
+      LOG_LEVEL: ${DOCKER_LOG_LEVEL:-INFO}
+      SEED_DEMO: ${DOCKER_SEED_DEMO:-False}
+    volumes:
+      - staticfiles:/app/staticfiles
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DOCKER_MYSQL_DATABASE:-homerent}
+      MYSQL_USER: ${DOCKER_MYSQL_USER:-homerent}
+      MYSQL_PASSWORD: ${DOCKER_MYSQL_PASSWORD:-homerent_password}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_MYSQL_ROOT_PASSWORD:-root_password}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    environment:
+      CADDY_SITE_ADDRESS: ${DOCKER_CADDY_SITE_ADDRESS:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - staticfiles:/srv/static:ro
+      - media:/srv/media:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  mysql_data:
+  staticfiles:
+  media:
+  caddy_data:
+  caddy_config:

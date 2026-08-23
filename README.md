@@ -181,3 +181,51 @@ MYSQL_PASSWORD=password
 MYSQL_HOST=127.0.0.1
 MYSQL_PORT=3306
 ```
+
+## Docker Compose
+
+Compose runs three services:
+
+- `app`: one Docker image with the React build, Django, Gunicorn, migrations and
+  static collection on startup.
+- `db`: minimal MySQL 8.4 with `utf8mb4`.
+- `caddy`: public entrypoint on ports `80` and `443`, reverse proxying Django and
+  serving `/static/` and `/media/` from shared volumes.
+
+Create Docker env values:
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+For local testing, the defaults use `localhost`. For a real HTTPS deployment,
+set at least:
+
+```text
+DOCKER_SECRET_KEY=<strong-secret>
+DOCKER_ALLOWED_HOSTS=example.com
+DOCKER_CSRF_TRUSTED_ORIGINS=https://example.com
+DOCKER_CADDY_SITE_ADDRESS=example.com
+DOCKER_MYSQL_PASSWORD=<strong-password>
+DOCKER_MYSQL_ROOT_PASSWORD=<strong-root-password>
+```
+
+Build and run:
+
+```bash
+docker compose --env-file .env.docker up --build
+```
+
+Useful commands:
+
+```bash
+docker compose --env-file .env.docker exec app python manage.py createsuperuser
+docker compose --env-file .env.docker exec app python manage.py seed_demo
+docker compose --env-file .env.docker down
+```
+
+To load demo data automatically on container startup:
+
+```text
+DOCKER_SEED_DEMO=True
+```
