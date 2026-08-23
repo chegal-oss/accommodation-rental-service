@@ -32,7 +32,7 @@ class ReviewAPITests(APITestCase):
             city="Berlin",
             district="Mitte",
             price="1200.00",
-            rooms="2.5",
+            rooms=2,
             housing_type="apartment",
         )
 

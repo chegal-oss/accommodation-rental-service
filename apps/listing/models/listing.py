@@ -17,6 +17,7 @@ class Listing(TimeStampModel):
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"))
     city = models.CharField(_("city"), max_length=120)
+    postal_code = models.CharField(_("postal code"), max_length=20, blank=True)
     district = models.CharField(_("district"), max_length=120, blank=True)
     price = models.DecimalField(
         _("price"),
@@ -24,12 +25,7 @@ class Listing(TimeStampModel):
         decimal_places=2,
         validators=[MinValueValidator(0)],
     )
-    rooms = models.DecimalField(
-        _("rooms"),
-        max_digits=4,
-        decimal_places=1,
-        validators=[MinValueValidator(0)],
-    )
+    rooms = models.PositiveSmallIntegerField(_("rooms"), validators=[MinValueValidator(1)])
     housing_type = models.CharField(
         _("housing type"),
         max_length=20,
@@ -44,6 +40,7 @@ class Listing(TimeStampModel):
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["city"]),
+            models.Index(fields=["postal_code"]),
             models.Index(fields=["housing_type"]),
             models.Index(fields=["is_active"]),
             models.Index(fields=["price"]),

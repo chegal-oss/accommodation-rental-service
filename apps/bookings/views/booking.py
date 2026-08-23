@@ -61,10 +61,18 @@ class BookingViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(bookings)
 
         if page is not None:
-            serializer = BookingListSerializer(page, many=True)
+            serializer = BookingListSerializer(
+                page,
+                many=True,
+                context=self.get_serializer_context(),
+            )
             return self.get_paginated_response(serializer.data)
 
-        serializer = BookingListSerializer(bookings, many=True)
+        serializer = BookingListSerializer(
+            bookings,
+            many=True,
+            context=self.get_serializer_context(),
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="confirm")

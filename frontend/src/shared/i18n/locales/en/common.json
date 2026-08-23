@@ -1,0 +1,237 @@
+{
+  "app": {
+    "name": "HomeRent"
+  },
+  "analytics": {
+    "mySearches": "Search history",
+    "myViews": "Viewed listings",
+    "noSearches": "No searches yet.",
+    "noViews": "No viewed listings yet.",
+    "popularListings": "Popular listings",
+    "popularListingsSubtitle": "Listings with the most views and reviews.",
+    "popularSearches": "Popular searches"
+  },
+  "auth": {
+    "createAccount": "Create account",
+    "creatingAccount": "Creating account...",
+    "email": "Email",
+    "hasAccount": "Already have an account?",
+    "loginFailed": "Could not sign in. Check your email and password.",
+    "loginSubtitle": "Manage bookings, publish listings and keep your rental activity in one account.",
+    "loginTitle": "Sign in to manage your rental activity",
+    "logout": "Log out",
+    "memberAccess": "Member access",
+    "name": "Name",
+    "noAccount": "Do not have an account?",
+    "password": "Password",
+    "phone": "Phone",
+    "registrationFailed": "Could not create account. Check the form and try again.",
+    "registerSubtitle": "Choose a tenant account to book homes or a landlord account to publish and manage listings.",
+    "registerTitle": "Create an account for renting or publishing homes",
+    "role": "Role",
+    "signIn": "Sign in",
+    "signingIn": "Signing in..."
+  },
+  "bookingStatus": {
+    "cancelled": "Cancelled",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "rejected": "Rejected"
+  },
+  "bookings": {
+    "allStatuses": "All statuses",
+    "cancel": "Cancel",
+    "cancelConfirmDescription": "This will change the booking status to Cancelled.",
+    "cancelConfirmTitle": "Cancel this booking?",
+    "confirm": "Confirm",
+    "contact": "Contact",
+    "currentBooking": "Your booking",
+    "emptySubtitle": "Booking requests and completed bookings will appear here.",
+    "emptyTitle": "No bookings yet",
+    "endDate": "End date",
+    "landlordSubtitle": "Confirm or reject booking requests for your listings.",
+    "landlordTitle": "Listing bookings",
+    "mySubtitle": "Track active and completed booking requests.",
+    "myTitle": "My bookings",
+    "priceBreakdown": "{{price}} x {{count}} nights",
+    "reject": "Reject",
+    "requestBooking": "Request booking",
+    "requestCreated": "Booking request created.",
+    "requestFailed": "Could not create booking request.",
+    "requesting": "Sending request...",
+    "signInRequired": "Sign in as a tenant to request a booking.",
+    "startDate": "Start date",
+    "tenantOnly": "Only tenants can request bookings for listings.",
+    "totalPrice": "Total"
+  },
+  "common": {
+    "bath": "Bath",
+    "beds": "Rooms",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "district": "District",
+    "edit": "Edit",
+    "from": "From",
+    "guests": "Guests",
+    "loading": "Loading...",
+    "night": "night",
+    "search": "Search",
+    "viewDetails": "View details"
+  },
+  "errors": {
+    "fields": {
+      "email": "Email",
+      "booking": "Booking",
+      "comment": "Comment",
+      "housing_type": "Property type",
+      "is_active": "Status",
+      "listing": "Listing",
+      "name": "Name",
+      "non_field_errors": "Error",
+      "password": "Password",
+      "phone": "Phone",
+      "postal_code": "Postal code",
+      "price": "Price",
+      "rating": "Rating",
+      "rooms": "Rooms",
+      "role": "Role"
+    },
+    "requestFailed": "Request failed"
+  },
+  "filters": {
+    "city": "City",
+    "clearSearch": "Clear search",
+    "district": "District",
+    "maxPrice": "Max price",
+    "maxPriceShort": "Up to €",
+    "minRooms": "Min rooms",
+    "minRoomsShort": "Rooms from",
+    "postalCode": "Postal code",
+    "postalCodeShort": "ZIP",
+    "propertyType": "Property type",
+    "removeSearchTerm": "Remove {{term}} from search",
+    "sort": "Sort"
+  },
+  "gallery": {
+    "close": "Close image preview",
+    "counter": "{{current}} of {{total}}",
+    "next": "Next image",
+    "previous": "Previous image"
+  },
+  "hero": {
+    "eyebrow": "Rentals across Germany",
+    "subtitle": "Find verified apartments, houses and studios with clear prices, photos and booking status.",
+    "title": "Find your next home"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "listings": {
+    "create": "New listing",
+    "featured": "Featured listings",
+    "found": "{{count}} listings found",
+    "searchPlaceholder": "Search by title, description or city",
+    "searchShortPlaceholder": "Search",
+    "searchResultsTitle": "Found for your request",
+    "sortedResultsTitle": "Listings by selected sort",
+    "title": "Listings"
+  },
+  "listingForm": {
+    "createSubtitle": "Add the key property details, publish it when ready and upload up to 6 photos.",
+    "createTitle": "Create listing",
+    "choosePhoto": "Choose image",
+    "description": "Description",
+    "editSubtitle": "Update property details, availability and optionally add more photos.",
+    "editTitle": "Edit listing",
+    "isActive": "Publish as active",
+    "photoPreview": "Photo {{number}}",
+    "photoSlot": "Photo {{number}}",
+    "photos": "Property photos",
+    "photosHint": "Use up to {{count}} photo slots",
+    "price": "Price per night",
+    "removePhoto": "Remove selected photo",
+    "replacePhoto": "Replace",
+    "rooms": "Rooms",
+    "save": "Save listing",
+    "saveFailed": "Could not save listing. Check the form and try again.",
+    "saving": "Saving...",
+    "title": "Title",
+    "update": "Update listing"
+  },
+  "listingImages": {
+    "delete": "Delete photo",
+    "deleteFailed": "Could not delete photo.",
+    "empty": "No photos uploaded yet.",
+    "subtitle": "Review uploaded photos and remove those you no longer want to show.",
+    "title": "Uploaded photos"
+  },
+  "myListings": {
+    "activate": "Activate",
+    "deleteConfirm": "Delete this listing?",
+    "deleteDescription": "This action removes the listing from the database. Uploaded photos and related management history may no longer be available.",
+    "emptySubtitle": "Create your first listing and it will appear here.",
+    "emptyTitle": "No listings yet",
+    "hide": "Hide",
+    "subtitle": "Manage the properties you publish as a landlord.",
+    "title": "My listings"
+  },
+  "navigation": {
+    "bookings": "Bookings",
+    "listings": "Listings",
+    "myListings": "My listings"
+  },
+  "profile": {
+    "account": "Account",
+    "notSet": "Not set",
+    "save": "Save changes",
+    "saveFailed": "Could not save profile.",
+    "saving": "Saving...",
+    "userId": "User ID"
+  },
+  "propertyTypes": {
+    "all": "All types",
+    "apartment": "Apartment",
+    "house": "House",
+    "other": "Other",
+    "room": "Room",
+    "studio": "Studio"
+  },
+  "sort": {
+    "newest": "Newest",
+    "popular": "Popular",
+    "priceAsc": "Price: low to high",
+    "priceDesc": "Price: high to low"
+  },
+  "roles": {
+    "landlord": "Landlord",
+    "tenant": "Tenant"
+  },
+  "reviews": {
+    "actions": "Review actions",
+    "afterStay": "You can leave a review after the confirmed booking end date.",
+    "alreadyReviewed": "You have already reviewed this listing. You can edit or delete your review below.",
+    "comment": "Comment",
+    "completedBookingRequired": "A review becomes available after you complete a confirmed booking for this listing.",
+    "count": "{{count}} reviews",
+    "empty": "No reviews yet.",
+    "leaveReview": "Leave a review",
+    "rating": "Rating",
+    "deleteFailed": "Could not delete review.",
+    "saveFailed": "Could not save review.",
+    "saving": "Saving...",
+    "signInToReview": "Sign in as a tenant to leave a review after your stay.",
+    "submit": "Submit review",
+    "tenantOnly": "Only tenants can leave reviews for listings.",
+    "title": "Reviews",
+    "update": "Update review"
+  },
+  "validation": {
+    "email": "Enter a valid email address.",
+    "integerRooms": "Enter a whole number of rooms.",
+    "minDescription": "Description must contain at least 20 characters.",
+    "minName": "Name must contain at least 2 characters.",
+    "minPassword": "Password must contain at least 8 characters.",
+    "minTitle": "Title must contain at least 3 characters.",
+    "required": "This field is required."
+  }
+}

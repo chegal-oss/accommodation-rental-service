@@ -29,7 +29,7 @@ class ListingViewSet(viewsets.ModelViewSet):
         filters.OrderingFilter,
     )
     filterset_class = ListingFilter
-    search_fields = ("title", "description")
+    search_fields = ("title", "description", "city", "postal_code", "district")
     ordering_fields = ("price", "created_at", "views_count", "reviews_count")
     ordering = ("-created_at",)
 

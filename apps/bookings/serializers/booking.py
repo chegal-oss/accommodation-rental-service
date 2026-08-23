@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -5,7 +7,52 @@ from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
 
 
-class BookingListSerializer(serializers.ModelSerializer):
+class BookingPriceAndContactMixin(serializers.ModelSerializer):
+    listing_price = serializers.DecimalField(
+        source="listing.price",
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+    nights = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
+    contact_name = serializers.SerializerMethodField()
+    contact_email = serializers.SerializerMethodField()
+    contact_phone = serializers.SerializerMethodField()
+
+    def get_nights(self, booking):
+        return max((booking.end_date - booking.start_date).days, 0)
+
+    def get_total_price(self, booking):
+        total_price = booking.listing.price * Decimal(self.get_nights(booking))
+        return str(total_price.quantize(Decimal("0.01")))
+
+    def get_contact_name(self, booking):
+        contact_user = self._get_contact_user(booking)
+        return contact_user.name
+
+    def get_contact_email(self, booking):
+        contact_user = self._get_contact_user(booking)
+        return contact_user.email
+
+    def get_contact_phone(self, booking):
+        contact_user = self._get_contact_user(booking)
+        return contact_user.phone
+
+    def _get_contact_user(self, booking):
+        request = self.context.get("request")
+
+        if (
+            request
+            and request.user.is_authenticated
+            and request.user.id == booking.tenant_id
+        ):
+            return booking.listing.owner
+
+        return booking.tenant
+
+
+class BookingListSerializer(BookingPriceAndContactMixin):
     listing_title = serializers.CharField(source="listing.title", read_only=True)
 
     class Meta:
@@ -14,6 +61,12 @@ class BookingListSerializer(serializers.ModelSerializer):
             "id",
             "listing",
             "listing_title",
+            "listing_price",
+            "nights",
+            "total_price",
+            "contact_name",
+            "contact_email",
+            "contact_phone",
             "start_date",
             "end_date",
             "status",
@@ -22,7 +75,7 @@ class BookingListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class BookingDetailSerializer(serializers.ModelSerializer):
+class BookingDetailSerializer(BookingPriceAndContactMixin):
     listing_title = serializers.CharField(source="listing.title", read_only=True)
     tenant_email = serializers.EmailField(source="tenant.email", read_only=True)
 
@@ -32,6 +85,12 @@ class BookingDetailSerializer(serializers.ModelSerializer):
             "id",
             "listing",
             "listing_title",
+            "listing_price",
+            "nights",
+            "total_price",
+            "contact_name",
+            "contact_email",
+            "contact_phone",
             "tenant",
             "tenant_email",
             "start_date",

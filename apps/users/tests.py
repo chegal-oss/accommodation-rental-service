@@ -49,3 +49,23 @@ class UserAuthAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["email"], user.email)
+
+    def test_registration_errors_are_localized_by_accept_language(self):
+        response = self.client.post(
+            "/api/v1/auth/register/",
+            {
+                "email": "tenant@example.com",
+                "name": "Tenant",
+                "phone": "bad",
+                "role": UserRole.TENANT,
+                "password": "StrongPass123!",
+            },
+            HTTP_ACCEPT_LANGUAGE="ru",
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data["phone"][0],
+            "Введите корректный номер телефона. Он может содержать цифры, пробелы, дефисы, скобки и необязательный знак плюс в начале.",
+        )

@@ -16,18 +16,21 @@ class BookingAPITests(APITestCase):
             email="tenant@example.com",
             password="StrongPass123!",
             name="Tenant",
+            phone="+49111111111",
             role=UserRole.TENANT,
         )
         self.landlord = User.objects.create_user(
             email="landlord@example.com",
             password="StrongPass123!",
             name="Landlord",
+            phone="+49222222222",
             role=UserRole.LANDLORD,
         )
         self.other_landlord = User.objects.create_user(
             email="other-landlord@example.com",
             password="StrongPass123!",
             name="Other Landlord",
+            phone="+49333333333",
             role=UserRole.LANDLORD,
         )
         self.listing = Listing.objects.create(
@@ -37,7 +40,7 @@ class BookingAPITests(APITestCase):
             city="Berlin",
             district="Mitte",
             price="1200.00",
-            rooms="2.5",
+            rooms=2,
             housing_type="apartment",
         )
 
@@ -101,6 +104,29 @@ class BookingAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
+        booking_data = response.data["results"][0]
+        self.assertEqual(booking_data["listing_price"], "1200.00")
+        self.assertEqual(booking_data["nights"], 3)
+        self.assertEqual(booking_data["total_price"], "3600.00")
+        self.assertEqual(booking_data["contact_email"], self.landlord.email)
+        self.assertEqual(booking_data["contact_phone"], self.landlord.phone)
+
+    def test_landlord_gets_tenant_contact_in_booking_list(self):
+        Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=timezone.localdate() + timedelta(days=10),
+            end_date=timezone.localdate() + timedelta(days=13),
+        )
+        self.client.force_authenticate(user=self.landlord)
+
+        response = self.client.get("/api/v1/bookings/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        booking_data = response.data["results"][0]
+        self.assertEqual(booking_data["contact_email"], self.tenant.email)
+        self.assertEqual(booking_data["contact_phone"], self.tenant.phone)
 
     def test_overlapping_booking_is_rejected(self):
         start_date = timezone.localdate() + timedelta(days=10)

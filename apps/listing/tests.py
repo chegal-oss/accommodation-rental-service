@@ -38,8 +38,10 @@ class ListingAPITests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["postal_code"], "10115")
         listing = Listing.objects.get()
         self.assertEqual(listing.owner, self.landlord)
+        self.assertEqual(listing.postal_code, "10115")
 
     def test_tenant_cannot_create_listing(self):
         self.client.force_authenticate(user=self.tenant)
@@ -78,6 +80,24 @@ class ListingAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["title"], "Berlin flat")
+        self.assertEqual(response.data["results"][0]["postal_code"], "10115")
+
+    def test_listing_list_can_be_filtered_by_postal_code(self):
+        Listing.objects.create(owner=self.landlord, **self._listing_data())
+        Listing.objects.create(
+            owner=self.landlord,
+            **self._listing_data(
+                title="Hamburg flat",
+                city="Hamburg",
+                postal_code="22765",
+            ),
+        )
+
+        response = self.client.get("/api/v1/listings/?postal_code=10115")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["title"], "Berlin flat")
 
     def test_landlord_can_get_own_listings(self):
         Listing.objects.create(owner=self.landlord, **self._listing_data())
@@ -93,6 +113,15 @@ class ListingAPITests(APITestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["title"], "Berlin flat")
 
+    def test_listing_list_returns_cover_image(self):
+        listing = Listing.objects.create(owner=self.landlord, **self._listing_data())
+        ListingImage.objects.create(listing=listing, image=self._image_file(1), position=0)
+
+        response = self.client.get("/api/v1/listings/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("/media/", response.data["results"][0]["cover_image"])
+
     def test_listing_images_upload_rejects_more_than_six_images(self):
         listing = Listing.objects.create(owner=self.landlord, **self._listing_data())
         self.client.force_authenticate(user=self.landlord)
@@ -105,6 +134,25 @@ class ListingAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(ListingImage.objects.count(), 0)
+
+    def test_listing_images_upload_accepts_positions(self):
+        listing = Listing.objects.create(owner=self.landlord, **self._listing_data())
+        self.client.force_authenticate(user=self.landlord)
+
+        response = self.client.post(
+            f"/api/v1/listings/{listing.id}/images/",
+            {
+                "images": [self._image_file(1), self._image_file(2)],
+                "positions": [3, 0],
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            list(ListingImage.objects.order_by("id").values_list("position", flat=True)),
+            [3, 0],
+        )
 
     def test_landlord_cannot_add_image_to_other_listing(self):
         listing = Listing.objects.create(owner=self.landlord, **self._listing_data())
@@ -127,9 +175,10 @@ class ListingAPITests(APITestCase):
             "title": "Berlin flat",
             "description": "Nice apartment",
             "city": "Berlin",
+            "postal_code": "10115",
             "district": "Mitte",
             "price": "1200.00",
-            "rooms": "2.5",
+            "rooms": 2,
             "housing_type": "apartment",
             "is_active": True,
         }

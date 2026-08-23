@@ -17,12 +17,20 @@ class ListingAdmin(admin.ModelAdmin):
         "title",
         "owner",
         "city",
+        "postal_code",
         "price",
         "rooms",
         "housing_type",
         "is_active",
         "created_at",
     )
-    list_filter = ("is_active", "housing_type", "city", "created_at")
-    search_fields = ("title", "description", "city", "district", "owner__email")
+    list_filter = ("is_active", "housing_type", "city", "postal_code", "created_at")
+    search_fields = (
+        "title",
+        "description",
+        "city",
+        "postal_code",
+        "district",
+        "owner__email",
+    )
     ordering = ("-created_at",)

@@ -1,0 +1,237 @@
+{
+  "app": {
+    "name": "HomeRent"
+  },
+  "analytics": {
+    "mySearches": "Suchverlauf",
+    "myViews": "Angesehene Anzeigen",
+    "noSearches": "Noch keine Suchanfragen.",
+    "noViews": "Noch keine angesehenen Anzeigen.",
+    "popularListings": "Beliebte Anzeigen",
+    "popularListingsSubtitle": "Anzeigen mit den meisten Aufrufen und Bewertungen.",
+    "popularSearches": "Beliebte Suchanfragen"
+  },
+  "auth": {
+    "createAccount": "Konto erstellen",
+    "creatingAccount": "Konto wird erstellt...",
+    "email": "E-Mail",
+    "hasAccount": "Sie haben bereits ein Konto?",
+    "loginFailed": "Anmeldung fehlgeschlagen. Prüfen Sie E-Mail und Passwort.",
+    "loginSubtitle": "Verwalten Sie Buchungen, veröffentlichen Sie Anzeigen und behalten Sie Ihre Vermietung in einem Konto.",
+    "loginTitle": "Melden Sie sich an, um Ihre Vermietung zu verwalten",
+    "logout": "Abmelden",
+    "memberAccess": "Kontozugang",
+    "name": "Name",
+    "noAccount": "Sie haben noch kein Konto?",
+    "password": "Passwort",
+    "phone": "Telefon",
+    "registrationFailed": "Konto konnte nicht erstellt werden. Prüfen Sie das Formular und versuchen Sie es erneut.",
+    "registerSubtitle": "Wählen Sie ein Mieterkonto zum Buchen oder ein Vermieterkonto zum Veröffentlichen und Verwalten von Anzeigen.",
+    "registerTitle": "Erstellen Sie ein Konto zum Mieten oder Veröffentlichen von Wohnraum",
+    "role": "Rolle",
+    "signIn": "Anmelden",
+    "signingIn": "Anmeldung läuft..."
+  },
+  "bookingStatus": {
+    "cancelled": "Storniert",
+    "confirmed": "Bestätigt",
+    "pending": "Ausstehend",
+    "rejected": "Abgelehnt"
+  },
+  "bookings": {
+    "allStatuses": "Alle Status",
+    "cancel": "Stornieren",
+    "cancelConfirmDescription": "Der Buchungsstatus wird auf Storniert geändert.",
+    "cancelConfirmTitle": "Diese Buchung stornieren?",
+    "confirm": "Bestätigen",
+    "contact": "Kontakt",
+    "currentBooking": "Ihre Buchung",
+    "emptySubtitle": "Buchungsanfragen und abgeschlossene Buchungen erscheinen hier.",
+    "emptyTitle": "Noch keine Buchungen",
+    "endDate": "Enddatum",
+    "landlordSubtitle": "Bestätigen oder lehnen Sie Buchungsanfragen für Ihre Anzeigen ab.",
+    "landlordTitle": "Buchungen für Anzeigen",
+    "mySubtitle": "Verfolgen Sie aktive und abgeschlossene Buchungsanfragen.",
+    "myTitle": "Meine Buchungen",
+    "priceBreakdown": "{{price}} x Nächte: {{count}}",
+    "reject": "Ablehnen",
+    "requestBooking": "Buchung anfragen",
+    "requestCreated": "Buchungsanfrage erstellt.",
+    "requestFailed": "Buchungsanfrage konnte nicht erstellt werden.",
+    "requesting": "Anfrage wird gesendet...",
+    "signInRequired": "Melden Sie sich als Mieter an, um eine Buchung anzufragen.",
+    "startDate": "Startdatum",
+    "tenantOnly": "Nur Mieter können Buchungen für Anzeigen anfragen.",
+    "totalPrice": "Gesamt"
+  },
+  "common": {
+    "bath": "Bad",
+    "beds": "Zimmer",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "district": "Stadtteil",
+    "edit": "Bearbeiten",
+    "from": "Ab",
+    "guests": "Gäste",
+    "loading": "Wird geladen...",
+    "night": "Nacht",
+    "search": "Suchen",
+    "viewDetails": "Details ansehen"
+  },
+  "errors": {
+    "fields": {
+      "email": "E-Mail",
+      "booking": "Buchung",
+      "comment": "Kommentar",
+      "housing_type": "Wohnungstyp",
+      "is_active": "Status",
+      "listing": "Anzeige",
+      "name": "Name",
+      "non_field_errors": "Fehler",
+      "password": "Passwort",
+      "phone": "Telefon",
+      "postal_code": "Postleitzahl",
+      "price": "Preis",
+      "rating": "Bewertung",
+      "rooms": "Zimmer",
+      "role": "Rolle"
+    },
+    "requestFailed": "Anfrage fehlgeschlagen"
+  },
+  "filters": {
+    "city": "Stadt",
+    "clearSearch": "Suche löschen",
+    "district": "Stadtteil",
+    "maxPrice": "Max. Preis",
+    "maxPriceShort": "Bis €",
+    "minRooms": "Min. Zimmer",
+    "minRoomsShort": "Zimmer ab",
+    "postalCode": "Postleitzahl",
+    "postalCodeShort": "PLZ",
+    "propertyType": "Wohnungstyp",
+    "removeSearchTerm": "{{term}} aus der Suche entfernen",
+    "sort": "Sortierung"
+  },
+  "gallery": {
+    "close": "Bildvorschau schließen",
+    "counter": "{{current}} von {{total}}",
+    "next": "Nächstes Bild",
+    "previous": "Vorheriges Bild"
+  },
+  "hero": {
+    "eyebrow": "Mieten in ganz Deutschland",
+    "subtitle": "Finden Sie geprüfte Wohnungen, Häuser und Studios mit klaren Preisen, Fotos und Buchungsstatus.",
+    "title": "Finden Sie Ihr nächstes Zuhause"
+  },
+  "language": {
+    "label": "Sprache"
+  },
+  "listings": {
+    "create": "Neue Anzeige",
+    "featured": "Empfohlene Anzeigen",
+    "found": "{{count}} Anzeigen gefunden",
+    "searchPlaceholder": "Nach Titel, Beschreibung oder Stadt suchen",
+    "searchShortPlaceholder": "Suchen",
+    "searchResultsTitle": "Zu Ihrer Anfrage gefunden",
+    "sortedResultsTitle": "Anzeigen nach gewählter Sortierung",
+    "title": "Anzeigen"
+  },
+  "listingForm": {
+    "createSubtitle": "Fügen Sie die wichtigsten Objektdaten hinzu, veröffentlichen Sie die Anzeige und laden Sie bis zu 6 Fotos hoch.",
+    "createTitle": "Anzeige erstellen",
+    "choosePhoto": "Bild auswählen",
+    "description": "Beschreibung",
+    "editSubtitle": "Aktualisieren Sie Objektdaten, Verfügbarkeit und fügen Sie optional weitere Fotos hinzu.",
+    "editTitle": "Anzeige bearbeiten",
+    "isActive": "Als aktiv veröffentlichen",
+    "photoPreview": "Foto {{number}}",
+    "photoSlot": "Foto {{number}}",
+    "photos": "Objektfotos",
+    "photosHint": "Nutzen Sie bis zu {{count}} Foto-Slots",
+    "price": "Preis pro Nacht",
+    "removePhoto": "Ausgewähltes Foto entfernen",
+    "replacePhoto": "Ersetzen",
+    "rooms": "Zimmer",
+    "save": "Anzeige speichern",
+    "saveFailed": "Anzeige konnte nicht gespeichert werden. Prüfen Sie das Formular und versuchen Sie es erneut.",
+    "saving": "Speichern...",
+    "title": "Titel",
+    "update": "Anzeige aktualisieren"
+  },
+  "listingImages": {
+    "delete": "Foto löschen",
+    "deleteFailed": "Foto konnte nicht gelöscht werden.",
+    "empty": "Noch keine Fotos hochgeladen.",
+    "subtitle": "Prüfen Sie hochgeladene Fotos und entfernen Sie Bilder, die nicht mehr angezeigt werden sollen.",
+    "title": "Hochgeladene Fotos"
+  },
+  "myListings": {
+    "activate": "Aktivieren",
+    "deleteConfirm": "Diese Anzeige löschen?",
+    "deleteDescription": "Diese Aktion entfernt die Anzeige aus der Datenbank. Hochgeladene Fotos und zugehörige Verwaltungsdaten sind danach möglicherweise nicht mehr verfügbar.",
+    "emptySubtitle": "Erstellen Sie Ihre erste Anzeige, dann erscheint sie hier.",
+    "emptyTitle": "Noch keine Anzeigen",
+    "hide": "Ausblenden",
+    "subtitle": "Verwalten Sie die Objekte, die Sie als Vermieter veröffentlichen.",
+    "title": "Meine Anzeigen"
+  },
+  "navigation": {
+    "bookings": "Buchungen",
+    "listings": "Anzeigen",
+    "myListings": "Meine Anzeigen"
+  },
+  "profile": {
+    "account": "Konto",
+    "notSet": "Nicht angegeben",
+    "save": "Änderungen speichern",
+    "saveFailed": "Profil konnte nicht gespeichert werden.",
+    "saving": "Speichern...",
+    "userId": "Benutzer-ID"
+  },
+  "propertyTypes": {
+    "all": "Alle Typen",
+    "apartment": "Wohnung",
+    "house": "Haus",
+    "other": "Sonstiges",
+    "room": "Zimmer",
+    "studio": "Studio"
+  },
+  "sort": {
+    "newest": "Neueste",
+    "popular": "Beliebt",
+    "priceAsc": "Preis: aufsteigend",
+    "priceDesc": "Preis: absteigend"
+  },
+  "roles": {
+    "landlord": "Vermieter",
+    "tenant": "Mieter"
+  },
+  "reviews": {
+    "actions": "Bewertungsaktionen",
+    "afterStay": "Sie können nach dem Enddatum der bestätigten Buchung eine Bewertung abgeben.",
+    "alreadyReviewed": "Sie haben diese Anzeige bereits bewertet. Sie können Ihre Bewertung unten bearbeiten oder löschen.",
+    "comment": "Kommentar",
+    "completedBookingRequired": "Eine Bewertung ist nach einer abgeschlossenen bestätigten Buchung für diese Anzeige möglich.",
+    "count": "{{count}} Bewertungen",
+    "empty": "Noch keine Bewertungen.",
+    "leaveReview": "Bewertung abgeben",
+    "rating": "Bewertung",
+    "deleteFailed": "Bewertung konnte nicht gelöscht werden.",
+    "saveFailed": "Bewertung konnte nicht gespeichert werden.",
+    "saving": "Speichern...",
+    "signInToReview": "Melden Sie sich als Mieter an, um nach Ihrem Aufenthalt eine Bewertung abzugeben.",
+    "submit": "Bewertung senden",
+    "tenantOnly": "Nur Mieter können Bewertungen für Anzeigen abgeben.",
+    "title": "Bewertungen",
+    "update": "Bewertung aktualisieren"
+  },
+  "validation": {
+    "email": "Geben Sie eine gültige E-Mail-Adresse ein.",
+    "integerRooms": "Geben Sie eine ganze Zimmeranzahl ein.",
+    "minDescription": "Die Beschreibung muss mindestens 20 Zeichen enthalten.",
+    "minName": "Der Name muss mindestens 2 Zeichen enthalten.",
+    "minPassword": "Das Passwort muss mindestens 8 Zeichen enthalten.",
+    "minTitle": "Der Titel muss mindestens 3 Zeichen enthalten.",
+    "required": "Dieses Feld ist erforderlich."
+  }
+}
