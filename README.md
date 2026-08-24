@@ -265,6 +265,16 @@ DOCKER_TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
 The site key is public and is baked into the frontend build. The secret key must
 stay only in backend environment variables.
 
+API requests are rate limited by Django REST framework. The defaults are:
+
+```text
+DRF_ANON_THROTTLE_RATE=300/hour
+DRF_USER_THROTTLE_RATE=3000/hour
+DRF_AUTH_REGISTER_THROTTLE_RATE=20/hour
+DRF_AUTH_TOKEN_THROTTLE_RATE=30/hour
+DRF_AUTH_REFRESH_THROTTLE_RATE=120/hour
+```
+
 To load demo data automatically on container startup:
 
 ```text
@@ -320,6 +330,11 @@ DOCKER_SUPERUSER_NAME=Admin
 DOCKER_SUPERUSER_PHONE=
 DOCKER_SUPERUSER_ROLE=landlord
 DOCKER_SEED_DEMO=False
+DOCKER_DRF_ANON_THROTTLE_RATE=300/hour
+DOCKER_DRF_USER_THROTTLE_RATE=3000/hour
+DOCKER_DRF_AUTH_REGISTER_THROTTLE_RATE=20/hour
+DOCKER_DRF_AUTH_TOKEN_THROTTLE_RATE=30/hour
+DOCKER_DRF_AUTH_REFRESH_THROTTLE_RATE=120/hour
 ```
 
 One-time server setup:

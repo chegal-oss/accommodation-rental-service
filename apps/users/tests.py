@@ -1,3 +1,4 @@
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -5,6 +6,7 @@ from apps.base.choices import UserRole
 from apps.users.models import User
 
 
+@override_settings(CAPTCHA_ENABLED=False)
 class UserAuthAPITests(APITestCase):
     def test_user_can_register_and_get_token(self):
         response = self.client.post(

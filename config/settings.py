@@ -207,6 +207,18 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.ScopedRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": os.getenv("DRF_ANON_THROTTLE_RATE", "300/hour"),
+        "user": os.getenv("DRF_USER_THROTTLE_RATE", "3000/hour"),
+        "auth_register": os.getenv("DRF_AUTH_REGISTER_THROTTLE_RATE", "20/hour"),
+        "auth_token": os.getenv("DRF_AUTH_TOKEN_THROTTLE_RATE", "30/hour"),
+        "auth_refresh": os.getenv("DRF_AUTH_REFRESH_THROTTLE_RATE", "120/hour"),
+    },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
