@@ -19,6 +19,7 @@ export type RegisterRequest = LoginRequest & {
   name: string
   phone?: string
   role: UserRole
+  captcha_token?: string
 }
 
 export type UpdateCurrentUserRequest = {

@@ -12,6 +12,9 @@
     "popularSearches": "Popular searches"
   },
   "auth": {
+    "captchaLabel": "Security check",
+    "captchaRequired": "Complete the security check.",
+    "captchaUnavailable": "Security check is unavailable. Please try again.",
     "createAccount": "Create account",
     "creatingAccount": "Creating account...",
     "email": "Email",
@@ -82,6 +85,7 @@
     "fields": {
       "email": "Email",
       "booking": "Booking",
+      "captcha_token": "Security check",
       "comment": "Comment",
       "housing_type": "Property type",
       "is_active": "Status",

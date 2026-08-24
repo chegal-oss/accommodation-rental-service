@@ -210,6 +210,10 @@ DOCKER_HTTP_PORT=80
 DOCKER_HTTPS_PORT=443
 DOCKER_SESSION_COOKIE_SECURE=True
 DOCKER_CSRF_COOKIE_SECURE=True
+DOCKER_CAPTCHA_ENABLED=True
+DOCKER_VITE_CAPTCHA_ENABLED=True
+DOCKER_TURNSTILE_SITE_KEY=<cloudflare-turnstile-site-key>
+DOCKER_TURNSTILE_SECRET_KEY=<cloudflare-turnstile-secret-key>
 DOCKER_MYSQL_PASSWORD=<strong-password>
 DOCKER_MYSQL_ROOT_PASSWORD=<strong-root-password>
 ```
@@ -240,6 +244,26 @@ DOCKER_SUPERUSER_ROLE=landlord
 
 The startup command is idempotent: if this user already exists, it will not
 create a duplicate.
+
+To protect registration with Cloudflare Turnstile, set both backend and frontend
+captcha flags:
+
+```text
+DOCKER_CAPTCHA_ENABLED=True
+DOCKER_VITE_CAPTCHA_ENABLED=True
+DOCKER_TURNSTILE_SITE_KEY=<cloudflare-turnstile-site-key>
+DOCKER_TURNSTILE_SECRET_KEY=<cloudflare-turnstile-secret-key>
+```
+
+For local testing, Cloudflare provides test keys that always pass:
+
+```text
+DOCKER_TURNSTILE_SITE_KEY=1x00000000000000000000AA
+DOCKER_TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+```
+
+The site key is public and is baked into the frontend build. The secret key must
+stay only in backend environment variables.
 
 To load demo data automatically on container startup:
 

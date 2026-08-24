@@ -1,18 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, KeyRound, Mail, Phone, UserRound } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useAuth } from '@/features/auth/model/useAuth'
 import type { UserRole } from '@/features/auth/model/types'
+import { env } from '@/shared/config/env'
+import { TurnstileWidget } from '@/shared/ui/TurnstileWidget'
 
 export function RegisterPage() {
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
   const { isAuthenticated, signUp } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
+  const [captchaError, setCaptchaError] = useState<string | null>(null)
+  const [captchaResetKey, setCaptchaResetKey] = useState(0)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const isCaptchaConfigured = !env.captchaEnabled || Boolean(env.turnstileSiteKey)
   const registerSchema = z.object({
     email: z.string().min(1, t('validation.required')).email(t('validation.email')),
     name: z.string().min(2, t('validation.minName')),
@@ -30,6 +36,31 @@ export function RegisterPage() {
     },
     resolver: zodResolver(registerSchema),
   })
+  const isSubmitDisabled = isSubmitting || (env.captchaEnabled && (!isCaptchaConfigured || !captchaToken))
+
+  const handleCaptchaVerify = useCallback((token: string) => {
+    setCaptchaToken(token)
+    setCaptchaError(null)
+  }, [])
+
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken('')
+    setCaptchaError(t('auth.captchaRequired'))
+  }, [t])
+
+  const handleCaptchaError = useCallback(() => {
+    setCaptchaToken('')
+    setCaptchaError(t('auth.captchaUnavailable'))
+  }, [t])
+
+  const resetCaptcha = useCallback(() => {
+    if (!env.captchaEnabled) {
+      return
+    }
+
+    setCaptchaToken('')
+    setCaptchaResetKey((currentKey) => currentKey + 1)
+  }, [])
 
   if (isAuthenticated) {
     return <Navigate to="/profile" replace />
@@ -48,15 +79,28 @@ export function RegisterPage() {
           className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm"
           onSubmit={handleSubmit(async (values) => {
             setError(null)
+            setCaptchaError(null)
+
+            if (env.captchaEnabled && !isCaptchaConfigured) {
+              setCaptchaError(t('auth.captchaUnavailable'))
+              return
+            }
+
+            if (env.captchaEnabled && !captchaToken) {
+              setCaptchaError(t('auth.captchaRequired'))
+              return
+            }
 
             try {
               await signUp({
                 ...values,
                 role: values.role as UserRole,
+                captcha_token: env.captchaEnabled ? captchaToken : undefined,
               })
               navigate('/profile')
             } catch (requestError) {
               setError(requestError instanceof Error ? requestError.message : t('auth.registrationFailed'))
+              resetCaptcha()
             }
           })}
         >
@@ -120,7 +164,26 @@ export function RegisterPage() {
             </label>
           </div>
 
-          <button className="mt-6 w-full rounded-md bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitting}>
+          {env.captchaEnabled ? (
+            <div className="mt-5">
+              {env.turnstileSiteKey ? (
+                <TurnstileWidget
+                  key={captchaResetKey}
+                  errorMessage={captchaError ?? undefined}
+                  label={t('auth.captchaLabel')}
+                  language={i18n.resolvedLanguage ?? i18n.language}
+                  siteKey={env.turnstileSiteKey}
+                  onError={handleCaptchaError}
+                  onExpire={handleCaptchaExpire}
+                  onVerify={handleCaptchaVerify}
+                />
+              ) : (
+                <span className="form-error">{captchaError ?? t('auth.captchaUnavailable')}</span>
+              )}
+            </div>
+          ) : null}
+
+          <button className="mt-6 w-full rounded-md bg-emerald-700 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60" disabled={isSubmitDisabled}>
             {isSubmitting ? t('auth.creatingAccount') : t('auth.createAccount')}
           </button>
         </form>

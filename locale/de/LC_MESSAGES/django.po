@@ -305,6 +305,22 @@ msgstr "Der Superuser muss is_staff=True haben."
 msgid "Superuser must have is_superuser=True."
 msgstr "Der Superuser muss is_superuser=True haben."
 
+#: apps/base/services/captcha.py:17
+msgid "Captcha verification is required."
+msgstr "Die Sicherheitsprüfung ist erforderlich."
+
+#: apps/base/services/captcha.py:20
+msgid "Captcha is not configured."
+msgstr "Die Sicherheitsprüfung ist nicht konfiguriert."
+
+#: apps/base/services/captcha.py:40
+msgid "Captcha verification is unavailable. Please try again."
+msgstr "Die Sicherheitsprüfung ist nicht verfügbar. Bitte versuchen Sie es erneut."
+
+#: apps/base/services/captcha.py:45
+msgid "Captcha verification failed. Please try again."
+msgstr "Die Sicherheitsprüfung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+
 #: apps/users/models.py:13
 msgid "email address"
 msgstr "E-Mail-Adresse"

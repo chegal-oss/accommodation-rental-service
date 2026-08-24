@@ -12,6 +12,9 @@
     "popularSearches": "Beliebte Suchanfragen"
   },
   "auth": {
+    "captchaLabel": "Sicherheitsprüfung",
+    "captchaRequired": "Schließen Sie die Sicherheitsprüfung ab.",
+    "captchaUnavailable": "Die Sicherheitsprüfung ist nicht verfügbar. Bitte versuchen Sie es erneut.",
     "createAccount": "Konto erstellen",
     "creatingAccount": "Konto wird erstellt...",
     "email": "E-Mail",
@@ -82,6 +85,7 @@
     "fields": {
       "email": "E-Mail",
       "booking": "Buchung",
+      "captcha_token": "Sicherheitsprüfung",
       "comment": "Kommentar",
       "housing_type": "Wohnungstyp",
       "is_active": "Status",
