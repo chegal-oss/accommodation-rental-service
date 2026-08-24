@@ -118,6 +118,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" \
             "cd '$DEPLOY_PATH' \
               && DOCKER_APP_IMAGE='$DOCKER_APP_IMAGE' docker compose --env-file .env.prod -f docker-compose.prod.yml pull \
+              && DOCKER_APP_IMAGE='$DOCKER_APP_IMAGE' docker compose --env-file .env.prod -f docker-compose.prod.yml run --rm --user root --entrypoint sh app -c 'mkdir -p /app/data /app/staticfiles /app/media && chown -R django:django /app/data /app/staticfiles /app/media' \
               && DOCKER_APP_IMAGE='$DOCKER_APP_IMAGE' docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --remove-orphans"
 
       - name: Check deployment

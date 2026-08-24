@@ -31,7 +31,7 @@ COPY --from=frontend-builder /frontend/dist ./frontend/dist
 
 RUN chmod +x ./docker/entrypoint.sh \
     && useradd --create-home --shell /usr/sbin/nologin django \
-    && mkdir -p /app/staticfiles /app/media \
+    && mkdir -p /app/data /app/staticfiles /app/media \
     && chown -R django:django /app
 
 USER django
