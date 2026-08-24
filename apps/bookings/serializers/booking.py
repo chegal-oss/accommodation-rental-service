@@ -20,22 +20,22 @@ class BookingPriceAndContactMixin(serializers.ModelSerializer):
     contact_email = serializers.SerializerMethodField()
     contact_phone = serializers.SerializerMethodField()
 
-    def get_nights(self, booking):
+    def get_nights(self, booking: Booking) -> int:
         return max((booking.end_date - booking.start_date).days, 0)
 
-    def get_total_price(self, booking):
+    def get_total_price(self, booking: Booking) -> str:
         total_price = booking.listing.price * Decimal(self.get_nights(booking))
         return str(total_price.quantize(Decimal("0.01")))
 
-    def get_contact_name(self, booking):
+    def get_contact_name(self, booking: Booking) -> str:
         contact_user = self._get_contact_user(booking)
         return contact_user.name
 
-    def get_contact_email(self, booking):
+    def get_contact_email(self, booking: Booking) -> str:
         contact_user = self._get_contact_user(booking)
         return contact_user.email
 
-    def get_contact_phone(self, booking):
+    def get_contact_phone(self, booking: Booking) -> str:
         contact_user = self._get_contact_user(booking)
         return contact_user.phone
 

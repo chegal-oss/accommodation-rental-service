@@ -108,6 +108,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+TEST_RUNNER = "apps.base.test_runner.QuietRequestWarningsDiscoverRunner"
 
 
 # Database
