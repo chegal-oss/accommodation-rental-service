@@ -292,8 +292,6 @@ Required GitHub Secrets:
 TURNSTILE_SITE_KEY
 TURNSTILE_SECRET_KEY
 DOCKER_SECRET_KEY
-DOCKER_MYSQL_PASSWORD
-DOCKER_MYSQL_ROOT_PASSWORD
 DEPLOY_HOST
 DEPLOY_USER
 DEPLOY_SSH_KEY
@@ -334,10 +332,14 @@ The deployment workflow renders `.env.prod` from GitHub Secrets and uploads it
 to the server. The generated `.env.prod` file stays on the server and must not be
 committed.
 
+Production deployment uses SQLite stored in the `sqlite_data` Docker volume to
+keep the runtime footprint low on small servers. MySQL support remains available
+through `USE_MYSQL=True` and the regular `docker-compose.yml` stack.
+
 The deployment workflow uploads `.env.prod`, `docker-compose.prod.yml`, and
 `docker/Caddyfile` to the server, pulls the selected image, and starts the stack:
 
 ```bash
 docker compose --env-file .env.prod -f docker-compose.prod.yml pull
-docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --remove-orphans
 ```
