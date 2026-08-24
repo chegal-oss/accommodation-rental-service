@@ -270,3 +270,74 @@ To load demo data automatically on container startup:
 ```text
 DOCKER_SEED_DEMO=True
 ```
+
+## CI/CD
+
+GitHub Actions has three stages:
+
+- `CI`: checks backend, frontend, and Docker build.
+- `Publish Docker Image`: builds the production image and pushes it to GHCR.
+- `Deploy`: connects to the server over SSH and updates the Docker Compose
+  stack.
+
+Production image:
+
+```text
+ghcr.io/chegal-oss/accommodation-rental-service:latest
+```
+
+Required GitHub Secrets:
+
+```text
+TURNSTILE_SITE_KEY
+TURNSTILE_SECRET_KEY
+DOCKER_SECRET_KEY
+DOCKER_MYSQL_PASSWORD
+DOCKER_MYSQL_ROOT_PASSWORD
+DEPLOY_HOST
+DEPLOY_USER
+DEPLOY_SSH_KEY
+```
+
+Optional GitHub Secrets:
+
+```text
+DOCKER_SUPERUSER_EMAIL
+DOCKER_SUPERUSER_PASSWORD
+```
+
+Optional GitHub Secrets for private GHCR images:
+
+```text
+GHCR_USERNAME
+GHCR_READ_TOKEN
+```
+
+Optional GitHub Variables:
+
+```text
+DEPLOY_PATH=/opt/homerent
+DEPLOY_HEALTH_URL=https://chegal.duckdns.org/api/schema/
+DOCKER_SUPERUSER_NAME=Admin
+DOCKER_SUPERUSER_PHONE=
+DOCKER_SUPERUSER_ROLE=landlord
+DOCKER_SEED_DEMO=False
+```
+
+One-time server setup:
+
+```bash
+mkdir -p /opt/homerent
+```
+
+The deployment workflow renders `.env.prod` from GitHub Secrets and uploads it
+to the server. The generated `.env.prod` file stays on the server and must not be
+committed.
+
+The deployment workflow uploads `.env.prod`, `docker-compose.prod.yml`, and
+`docker/Caddyfile` to the server, pulls the selected image, and starts the stack:
+
+```bash
+docker compose --env-file .env.prod -f docker-compose.prod.yml pull
+docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+```

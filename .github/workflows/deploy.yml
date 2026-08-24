@@ -1,0 +1,131 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - Publish Docker Image
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      image_ref:
+        description: Docker image tag to deploy
+        required: false
+        default: latest
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_REF: ${{ github.event.inputs.image_ref || github.event.workflow_run.head_sha || 'latest' }}
+  DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/homerent' }}
+  DEPLOY_HEALTH_URL: ${{ vars.DEPLOY_HEALTH_URL || 'https://chegal.duckdns.org/api/schema/' }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Prepare SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          test -n "$DEPLOY_SSH_KEY"
+          test -n "$DEPLOY_HOST"
+          test -n "$DEPLOY_USER"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Render production env
+        env:
+          DOCKER_APP_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_REF }}
+          DOCKER_SECRET_KEY: ${{ secrets.DOCKER_SECRET_KEY }}
+          DOCKER_TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          DOCKER_MYSQL_PASSWORD: ${{ secrets.DOCKER_MYSQL_PASSWORD }}
+          DOCKER_MYSQL_ROOT_PASSWORD: ${{ secrets.DOCKER_MYSQL_ROOT_PASSWORD }}
+          DOCKER_SUPERUSER_EMAIL: ${{ secrets.DOCKER_SUPERUSER_EMAIL }}
+          DOCKER_SUPERUSER_PASSWORD: ${{ secrets.DOCKER_SUPERUSER_PASSWORD }}
+          DOCKER_SUPERUSER_NAME: ${{ vars.DOCKER_SUPERUSER_NAME || 'Admin' }}
+          DOCKER_SUPERUSER_PHONE: ${{ vars.DOCKER_SUPERUSER_PHONE || '' }}
+          DOCKER_SUPERUSER_ROLE: ${{ vars.DOCKER_SUPERUSER_ROLE || 'landlord' }}
+          DOCKER_SEED_DEMO: ${{ vars.DOCKER_SEED_DEMO || 'False' }}
+        run: |
+          test -n "$DOCKER_SECRET_KEY"
+          test -n "$DOCKER_TURNSTILE_SECRET_KEY"
+          test -n "$DOCKER_MYSQL_PASSWORD"
+          test -n "$DOCKER_MYSQL_ROOT_PASSWORD"
+
+          {
+            printf 'DOCKER_APP_IMAGE=%s\n' "$DOCKER_APP_IMAGE"
+            printf 'DOCKER_SECRET_KEY=%s\n' "$DOCKER_SECRET_KEY"
+            printf 'DOCKER_DEBUG=False\n'
+            printf 'DOCKER_ALLOWED_HOSTS=chegal.duckdns.org\n'
+            printf 'DOCKER_CSRF_TRUSTED_ORIGINS=https://chegal.duckdns.org\n'
+            printf 'DOCKER_USE_X_FORWARDED_HOST=True\n'
+            printf 'DOCKER_SESSION_COOKIE_SECURE=True\n'
+            printf 'DOCKER_CSRF_COOKIE_SECURE=True\n'
+            printf 'DOCKER_LOG_LEVEL=INFO\n'
+            printf 'DOCKER_CAPTCHA_ENABLED=True\n'
+            printf 'DOCKER_TURNSTILE_SECRET_KEY=%s\n' "$DOCKER_TURNSTILE_SECRET_KEY"
+            printf 'DOCKER_CAPTCHA_VERIFY_TIMEOUT=5\n'
+            printf 'DOCKER_MYSQL_DATABASE=homerent\n'
+            printf 'DOCKER_MYSQL_USER=homerent\n'
+            printf 'DOCKER_MYSQL_PASSWORD=%s\n' "$DOCKER_MYSQL_PASSWORD"
+            printf 'DOCKER_MYSQL_ROOT_PASSWORD=%s\n' "$DOCKER_MYSQL_ROOT_PASSWORD"
+            printf 'DOCKER_CADDY_SITE_ADDRESS=chegal.duckdns.org\n'
+            printf 'DOCKER_HTTP_PORT=80\n'
+            printf 'DOCKER_HTTPS_PORT=443\n'
+            printf 'DOCKER_SUPERUSER_EMAIL=%s\n' "$DOCKER_SUPERUSER_EMAIL"
+            printf 'DOCKER_SUPERUSER_PASSWORD=%s\n' "$DOCKER_SUPERUSER_PASSWORD"
+            printf 'DOCKER_SUPERUSER_NAME=%s\n' "$DOCKER_SUPERUSER_NAME"
+            printf 'DOCKER_SUPERUSER_PHONE=%s\n' "$DOCKER_SUPERUSER_PHONE"
+            printf 'DOCKER_SUPERUSER_ROLE=%s\n' "$DOCKER_SUPERUSER_ROLE"
+            printf 'DOCKER_SEED_DEMO=%s\n' "$DOCKER_SEED_DEMO"
+          } > .env.prod.deploy
+
+      - name: Upload Compose files
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH/docker'"
+          scp -i ~/.ssh/deploy_key .env.prod.example "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.env.prod.example"
+          scp -i ~/.ssh/deploy_key .env.prod.deploy "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.env.prod"
+          scp -i ~/.ssh/deploy_key docker-compose.prod.yml "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/docker-compose.prod.yml"
+          scp -i ~/.ssh/deploy_key docker/Caddyfile "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/docker/Caddyfile"
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" "chmod 600 '$DEPLOY_PATH/.env.prod'"
+
+      - name: Deploy application
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_READ_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
+          DOCKER_APP_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_REF }}
+        run: |
+          if [ -n "$GHCR_READ_TOKEN" ]; then
+            test -n "$GHCR_USERNAME"
+            printf '%s' "$GHCR_READ_TOKEN" | ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" "docker login ghcr.io -u '$GHCR_USERNAME' --password-stdin"
+          fi
+
+          ssh -i ~/.ssh/deploy_key "$DEPLOY_USER@$DEPLOY_HOST" \
+            "cd '$DEPLOY_PATH' \
+              && DOCKER_APP_IMAGE='$DOCKER_APP_IMAGE' docker compose --env-file .env.prod -f docker-compose.prod.yml pull \
+              && DOCKER_APP_IMAGE='$DOCKER_APP_IMAGE' docker compose --env-file .env.prod -f docker-compose.prod.yml up -d"
+
+      - name: Check deployment
+        run: curl --fail --silent --show-error --retry 10 --retry-delay 6 --retry-all-errors "$DEPLOY_HEALTH_URL" > /dev/null
