@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
+from apps.users.models import User
 
 
 class BookingPriceAndContactMixin(serializers.ModelSerializer):
@@ -39,7 +40,7 @@ class BookingPriceAndContactMixin(serializers.ModelSerializer):
         contact_user = self._get_contact_user(booking)
         return contact_user.phone
 
-    def _get_contact_user(self, booking):
+    def _get_contact_user(self, booking: Booking) -> User:
         request = self.context.get("request")
 
         if (
