@@ -93,13 +93,6 @@ GET /api/v1/listings/?ordering=price
 
 ## Development Commands
 
-Use Python 3.12 or newer. Django 6.1 will not install on Python 3.11.
-
-```bash
-python3.14 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-```
-
 ```bash
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py runserver 127.0.0.1:8000

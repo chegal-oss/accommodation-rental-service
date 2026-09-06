@@ -2,6 +2,8 @@
 
 React + Vite + TypeScript frontend for the HomeRent property rental API.
 
+Use Node.js 22 or newer. The Docker build uses Node.js 22.
+
 ## Stack
 
 - React
@@ -29,7 +31,7 @@ VITE_API_BASE_URL=http://127.0.0.1:8000/api/v1
 ## Commands
 
 ```bash
-npm install
+npm ci
 npm run lint
 npm run build
 npm run dev
