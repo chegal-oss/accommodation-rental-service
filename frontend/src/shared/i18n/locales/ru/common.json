@@ -184,6 +184,9 @@
   },
   "profile": {
     "account": "Аккаунт",
+    "myReviews": "Мои отзывы",
+    "myReviewsCount": "Отзывов: {{count}}",
+    "noReviews": "Отзывов пока нет.",
     "notSet": "Не указан",
     "save": "Сохранить изменения",
     "saveFailed": "Не удалось сохранить профиль.",

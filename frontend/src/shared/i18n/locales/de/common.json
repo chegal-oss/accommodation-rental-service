@@ -184,6 +184,9 @@
   },
   "profile": {
     "account": "Konto",
+    "myReviews": "Meine Bewertungen",
+    "myReviewsCount": "{{count}} Bewertungen",
+    "noReviews": "Noch keine Bewertungen.",
     "notSet": "Nicht angegeben",
     "save": "Änderungen speichern",
     "saveFailed": "Profil konnte nicht gespeichert werden.",

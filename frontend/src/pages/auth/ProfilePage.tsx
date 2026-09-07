@@ -9,6 +9,7 @@ import { updateCurrentUser } from '@/features/auth/api/authApi'
 import { ProfileEditForm } from '@/features/auth/components/ProfileEditForm'
 import { useAuth } from '@/features/auth/model/useAuth'
 import type { UpdateCurrentUserRequest } from '@/features/auth/model/types'
+import { ProfileReviews } from '@/features/reviews/components/ProfileReviews'
 
 export function ProfilePage() {
   const { t } = useTranslation()
@@ -39,54 +40,59 @@ export function ProfilePage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{t('profile.account')}</p>
-            <h1 className="text-3xl font-semibold text-slate-950">{user?.name}</h1>
-          </div>
-          <div className="flex flex-wrap justify-end gap-2">
-            {!isEditing ? (
-              <button className="inline-flex items-center gap-2 rounded-md border border-stone-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-stone-100" onClick={() => setIsEditing(true)}>
-                <Pencil size={16} aria-hidden="true" />
-                {t('common.edit')}
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(320px,420px)_minmax(0,1fr)]">
+        <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{t('profile.account')}</p>
+              <h1 className="text-3xl font-semibold text-slate-950">{user?.name}</h1>
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              {!isEditing ? (
+                <button className="inline-flex items-center gap-2 rounded-md border border-stone-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-stone-100" onClick={() => setIsEditing(true)}>
+                  <Pencil size={16} aria-hidden="true" />
+                  {t('common.edit')}
+                </button>
+              ) : null}
+              <button
+                className="inline-flex items-center gap-2 rounded-md border border-stone-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-stone-100"
+                onClick={() => {
+                  signOut()
+                  navigate('/login')
+                }}
+              >
+                <LogOut size={16} aria-hidden="true" />
+                {t('auth.logout')}
               </button>
-            ) : null}
-            <button
-              className="inline-flex items-center gap-2 rounded-md border border-stone-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-stone-100"
-              onClick={() => {
-                signOut()
-                navigate('/login')
-              }}
-            >
-              <LogOut size={16} aria-hidden="true" />
-              {t('auth.logout')}
-            </button>
+            </div>
           </div>
+
+          {isEditing && user ? (
+            <ProfileEditForm
+              error={error}
+              isSubmitting={isSubmitting}
+              onCancel={() => {
+                setError(null)
+                setIsEditing(false)
+              }}
+              onSubmit={handleProfileUpdate}
+              user={user}
+            />
+          ) : (
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <ProfileField icon={<Mail size={17} aria-hidden="true" />} label={t('auth.email')} value={user?.email ?? ''} />
+              <ProfileField icon={<Phone size={17} aria-hidden="true" />} label={t('auth.phone')} value={user?.phone || t('profile.notSet')} />
+              <ProfileField icon={<UserRound size={17} aria-hidden="true" />} label={t('profile.userId')} value={String(user?.id ?? '')} />
+            </div>
+          )}
         </div>
 
-        {isEditing && user ? (
-          <ProfileEditForm
-            error={error}
-            isSubmitting={isSubmitting}
-            onCancel={() => {
-              setError(null)
-              setIsEditing(false)
-            }}
-            onSubmit={handleProfileUpdate}
-            user={user}
-          />
-        ) : (
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <ProfileField icon={<Mail size={17} aria-hidden="true" />} label={t('auth.email')} value={user?.email ?? ''} />
-            <ProfileField icon={<Phone size={17} aria-hidden="true" />} label={t('auth.phone')} value={user?.phone || t('profile.notSet')} />
-            <ProfileField icon={<UserRound size={17} aria-hidden="true" />} label={t('profile.userId')} value={String(user?.id ?? '')} />
-          </div>
-        )}
+        <div className="grid gap-6">
+          <ProfileActivity />
+          <ProfileReviews />
+        </div>
       </div>
-
-      <ProfileActivity />
     </section>
   )
 }

@@ -184,6 +184,9 @@
   },
   "profile": {
     "account": "Account",
+    "myReviews": "My reviews",
+    "myReviewsCount": "{{count}} reviews",
+    "noReviews": "No reviews yet.",
     "notSet": "Not set",
     "save": "Save changes",
     "saveFailed": "Could not save profile.",

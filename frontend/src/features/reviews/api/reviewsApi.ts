@@ -1,8 +1,13 @@
 import { apiRequest } from '@/shared/api/client'
+import type { PaginatedResponse } from '@/shared/api/pagination'
 import type { Review, ReviewCreateRequest } from '@/features/reviews/model/types'
 
 export function getListingReviews(listingId: string | number) {
   return apiRequest<Review[]>(`/listings/${listingId}/reviews/`)
+}
+
+export function getMyReviews(userId: number) {
+  return apiRequest<PaginatedResponse<Review>>(`/reviews/?user=${userId}`)
 }
 
 export function createReview(payload: ReviewCreateRequest) {
