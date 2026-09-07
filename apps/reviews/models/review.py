@@ -83,6 +83,12 @@ class Review(TimeStampModel):
             models.Index(fields=["user"]),
             models.Index(fields=["created_at"]),
         ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["listing", "user"],
+                name="unique_review_per_user_listing",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.listing} - {self.rating}"

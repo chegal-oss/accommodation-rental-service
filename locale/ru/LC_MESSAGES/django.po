@@ -295,6 +295,10 @@ msgstr "Отзыв можно оставить только для подтве�
 msgid "Booking must be completed before review."
 msgstr "Бронирование должно быть завершено перед отзывом."
 
+#: apps/reviews/serializers/review.py:104
+msgid "You have already reviewed this listing."
+msgstr "Вы уже оставили отзыв для этого объявления."
+
 #: apps/users/admin.py:17
 msgid "Personal info"
 msgstr "Личная информация"

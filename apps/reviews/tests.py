@@ -122,8 +122,31 @@ class ReviewAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def _completed_booking(self):
-        end_date = timezone.localdate() - timedelta(days=1)
+    def test_user_cannot_review_same_listing_twice(self):
+        first_booking = self._completed_booking(days_after_checkout=12)
+        second_booking = self._completed_booking(days_after_checkout=1)
+        Review.objects.create(
+            listing=self.listing,
+            user=self.tenant,
+            booking=first_booking,
+            **REVIEW_RATING_PAYLOAD,
+        )
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/reviews/",
+            {
+                "listing": self.listing.id,
+                "booking": second_booking.id,
+                **REVIEW_RATING_PAYLOAD,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def _completed_booking(self, days_after_checkout=1):
+        end_date = timezone.localdate() - timedelta(days=days_after_checkout)
         start_date = end_date - timedelta(days=3)
 
         return Booking.objects.create(

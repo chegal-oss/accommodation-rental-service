@@ -293,6 +293,10 @@ msgstr "Nur bestätigte Buchungen können bewertet werden."
 msgid "Booking must be completed before review."
 msgstr "Die Buchung muss abgeschlossen sein, bevor eine Bewertung abgegeben wird."
 
+#: apps/reviews/serializers/review.py:104
+msgid "You have already reviewed this listing."
+msgstr "Sie haben diese Anzeige bereits bewertet."
+
 #: apps/users/admin.py:17
 msgid "Personal info"
 msgstr "Persönliche Informationen"

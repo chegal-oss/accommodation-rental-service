@@ -121,4 +121,13 @@ class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
                 _("Booking must be completed before review.")
             )
 
+        existing_reviews = Review.objects.filter(listing=listing, user=user)
+        if self.instance:
+            existing_reviews = existing_reviews.exclude(pk=self.instance.pk)
+
+        if existing_reviews.exists():
+            raise serializers.ValidationError(
+                _("You have already reviewed this listing.")
+            )
+
         return attrs
