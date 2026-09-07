@@ -1,5 +1,8 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -23,6 +26,14 @@ class Booking(TimeStampModel):
     )
     start_date = models.DateField(_("start date"))
     end_date = models.DateField(_("end date"))
+    price_per_night = models.DecimalField(
+        _("price per night"),
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        editable=False,
+        validators=[MinValueValidator(0)],
+    )
     status = models.CharField(
         _("status"),
         max_length=20,
@@ -65,8 +76,21 @@ class Booking(TimeStampModel):
             raise ValidationError(_("This listing is already booked for these dates."))
 
     def save(self, *args, **kwargs):
+        if self._state.adding and self.listing_id:
+            self.price_per_night = self.listing.price
+
         self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.listing} ({self.start_date} - {self.end_date})"
+
+    def calculate_total_price(self):
+        return (self.price_per_night * Decimal(self.nights)).quantize(Decimal("0.01"))
+
+    @property
+    def nights(self):
+        if not self.start_date or not self.end_date:
+            return 0
+
+        return max((self.end_date - self.start_date).days, 0)

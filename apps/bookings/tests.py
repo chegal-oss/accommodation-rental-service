@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.utils import timezone
 from rest_framework import status
@@ -53,6 +54,8 @@ class BookingAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         booking = Booking.objects.get()
         self.assertEqual(booking.tenant, self.tenant)
+        self.assertEqual(booking.price_per_night, Decimal("1200.00"))
+        self.assertEqual(booking.calculate_total_price(), Decimal("3600.00"))
         self.assertEqual(booking.status, BookingStatus.PENDING)
 
         self.client.force_authenticate(user=self.landlord)
@@ -107,6 +110,25 @@ class BookingAPITests(APITestCase):
         self.assertEqual(booking_data["total_price"], "3600.00")
         self.assertEqual(booking_data["contact_email"], self.landlord.email)
         self.assertEqual(booking_data["contact_phone"], self.landlord.phone)
+
+    def test_booking_price_does_not_change_after_listing_price_update(self):
+        booking = Booking.objects.create(
+            listing=self.listing,
+            tenant=self.tenant,
+            start_date=timezone.localdate() + timedelta(days=10),
+            end_date=timezone.localdate() + timedelta(days=13),
+        )
+        self.listing.price = Decimal("1500.00")
+        self.listing.save(update_fields=("price", "updated_at"))
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.get("/api/v1/bookings/my/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        booking.refresh_from_db()
+        self.assertEqual(booking.price_per_night, Decimal("1200.00"))
+        self.assertEqual(response.data["results"][0]["listing_price"], "1200.00")
+        self.assertEqual(response.data["results"][0]["total_price"], "3600.00")
 
     def test_landlord_gets_tenant_contact_in_booking_list(self):
         Booking.objects.create(

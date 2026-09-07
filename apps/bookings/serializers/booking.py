@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -10,7 +8,7 @@ from apps.users.models import User
 
 class BookingPriceAndContactMixin(serializers.ModelSerializer):
     listing_price = serializers.DecimalField(
-        source="listing.price",
+        source="price_per_night",
         max_digits=10,
         decimal_places=2,
         read_only=True,
@@ -22,11 +20,10 @@ class BookingPriceAndContactMixin(serializers.ModelSerializer):
     contact_phone = serializers.SerializerMethodField()
 
     def get_nights(self, booking: Booking) -> int:
-        return max((booking.end_date - booking.start_date).days, 0)
+        return booking.nights
 
     def get_total_price(self, booking: Booking) -> str:
-        total_price = booking.listing.price * Decimal(self.get_nights(booking))
-        return str(total_price.quantize(Decimal("0.01")))
+        return str(booking.calculate_total_price())
 
     def get_contact_name(self, booking: Booking) -> str:
         contact_user = self._get_contact_user(booking)
@@ -105,18 +102,44 @@ class BookingDetailSerializer(BookingPriceAndContactMixin):
 
 
 class BookingCreateSerializer(serializers.ModelSerializer):
+    listing_price = serializers.DecimalField(
+        source="price_per_night",
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+    nights = serializers.SerializerMethodField()
+    total_price = serializers.SerializerMethodField()
+
     class Meta:
         model = Booking
         fields = (
             "id",
             "listing",
+            "listing_price",
+            "nights",
+            "total_price",
             "start_date",
             "end_date",
             "status",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "status", "created_at", "updated_at")
+        read_only_fields = (
+            "id",
+            "listing_price",
+            "nights",
+            "total_price",
+            "status",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_nights(self, booking: Booking) -> int:
+        return booking.nights
+
+    def get_total_price(self, booking: Booking) -> str:
+        return str(booking.calculate_total_price())
 
     def validate_listing(self, listing):
         if not listing.is_active:

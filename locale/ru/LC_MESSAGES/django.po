@@ -122,6 +122,10 @@ msgstr "дата начала"
 msgid "end date"
 msgstr "дата окончания"
 
+#: apps/bookings/models/booking.py:26
+msgid "price per night"
+msgstr "цена за ночь"
+
 #: apps/bookings/models/booking.py:27
 msgid "status"
 msgstr "статус"

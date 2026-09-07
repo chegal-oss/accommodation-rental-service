@@ -10,6 +10,7 @@ class BookingAdmin(admin.ModelAdmin):
         "tenant",
         "start_date",
         "end_date",
+        "price_per_night",
         "status",
         "created_at",
     )
