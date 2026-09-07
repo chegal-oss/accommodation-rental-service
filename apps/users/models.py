@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.base import TimeStampModel
-from apps.base.choices import UserRole
 from apps.base.validators import phone_number_validator
 from apps.users.managers import UserManager
 
@@ -17,12 +16,6 @@ class User(AbstractBaseUser, TimeStampModel, PermissionsMixin):
         max_length=20,
         blank=True,
         validators=[phone_number_validator],
-    )
-    role = models.CharField(
-        _("role"),
-        max_length=20,
-        choices=UserRole.choices,
-        default=UserRole.TENANT,
     )
     is_active = models.BooleanField(_("active"), default=True)
     is_staff = models.BooleanField(_("staff status"), default=False)

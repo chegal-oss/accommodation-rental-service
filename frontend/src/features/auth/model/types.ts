@@ -1,11 +1,8 @@
-export type UserRole = 'tenant' | 'landlord'
-
 export type CurrentUser = {
   id: number
   email: string
   name: string
   phone: string
-  role: UserRole
   created_at: string
   updated_at: string
 }
@@ -18,7 +15,6 @@ export type LoginRequest = {
 export type RegisterRequest = LoginRequest & {
   name: string
   phone?: string
-  role: UserRole
   captcha_token?: string
 }
 

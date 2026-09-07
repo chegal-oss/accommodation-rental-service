@@ -29,9 +29,8 @@
     "password": "Passwort",
     "phone": "Telefon",
     "registrationFailed": "Konto konnte nicht erstellt werden. Prüfen Sie das Formular und versuchen Sie es erneut.",
-    "registerSubtitle": "Wählen Sie ein Mieterkonto zum Buchen oder ein Vermieterkonto zum Veröffentlichen und Verwalten von Anzeigen.",
+    "registerSubtitle": "Buchen Sie Unterkünfte, veröffentlichen Sie Anzeigen und verwalten Sie Ihre Vermietung in einem Konto.",
     "registerTitle": "Erstellen Sie ein Konto zum Mieten oder Veröffentlichen von Wohnraum",
-    "role": "Rolle",
     "signIn": "Anmelden",
     "signingIn": "Anmeldung läuft..."
   },
@@ -52,19 +51,19 @@
     "emptySubtitle": "Buchungsanfragen und abgeschlossene Buchungen erscheinen hier.",
     "emptyTitle": "Noch keine Buchungen",
     "endDate": "Enddatum",
-    "landlordSubtitle": "Bestätigen oder lehnen Sie Buchungsanfragen für Ihre Anzeigen ab.",
-    "landlordTitle": "Buchungen für Anzeigen",
     "mySubtitle": "Verfolgen Sie aktive und abgeschlossene Buchungsanfragen.",
     "myTitle": "Meine Buchungen",
+    "ownListing": "Sie können Ihre eigene Anzeige nicht buchen.",
     "priceBreakdown": "{{price}} x Nächte: {{count}}",
     "reject": "Ablehnen",
     "requestBooking": "Buchung anfragen",
     "requestCreated": "Buchungsanfrage erstellt.",
     "requestFailed": "Buchungsanfrage konnte nicht erstellt werden.",
     "requesting": "Anfrage wird gesendet...",
-    "signInRequired": "Melden Sie sich als Mieter an, um eine Buchung anzufragen.",
+    "signInRequired": "Melden Sie sich an, um eine Buchung anzufragen.",
     "startDate": "Startdatum",
-    "tenantOnly": "Nur Mieter können Buchungen für Anzeigen anfragen.",
+    "subtitle": "Verfolgen Sie Ihre Buchungsanfragen und Anfragen für Ihre Anzeigen.",
+    "title": "Buchungen",
     "totalPrice": "Gesamt"
   },
   "common": {
@@ -97,8 +96,7 @@
       "postal_code": "Postleitzahl",
       "price": "Preis",
       "rating": "Bewertung",
-      "rooms": "Zimmer",
-      "role": "Rolle"
+      "rooms": "Zimmer"
     },
     "requestFailed": "Anfrage fehlgeschlagen"
   },
@@ -176,7 +174,7 @@
     "emptySubtitle": "Erstellen Sie Ihre erste Anzeige, dann erscheint sie hier.",
     "emptyTitle": "Noch keine Anzeigen",
     "hide": "Ausblenden",
-    "subtitle": "Verwalten Sie die Objekte, die Sie als Vermieter veröffentlichen.",
+    "subtitle": "Verwalten Sie die Objekte, die Sie veröffentlichen.",
     "title": "Meine Anzeigen"
   },
   "navigation": {
@@ -206,10 +204,6 @@
     "priceAsc": "Preis: aufsteigend",
     "priceDesc": "Preis: absteigend"
   },
-  "roles": {
-    "landlord": "Vermieter",
-    "tenant": "Mieter"
-  },
   "reviews": {
     "actions": "Bewertungsaktionen",
     "afterStay": "Sie können nach dem Enddatum der bestätigten Buchung eine Bewertung abgeben.",
@@ -223,9 +217,8 @@
     "deleteFailed": "Bewertung konnte nicht gelöscht werden.",
     "saveFailed": "Bewertung konnte nicht gespeichert werden.",
     "saving": "Speichern...",
-    "signInToReview": "Melden Sie sich als Mieter an, um nach Ihrem Aufenthalt eine Bewertung abzugeben.",
+    "signInToReview": "Melden Sie sich an, um nach Ihrem Aufenthalt eine Bewertung abzugeben.",
     "submit": "Bewertung senden",
-    "tenantOnly": "Nur Mieter können Bewertungen für Anzeigen abgeben.",
     "title": "Bewertungen",
     "update": "Bewertung aktualisieren"
   },

@@ -11,20 +11,16 @@ import { useState } from 'react'
 
 export function MyListingsPage() {
   const { t } = useTranslation()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated } = useAuth()
   const [listingToDelete, setListingToDelete] = useState<ListingListItem | null>(null)
   const myListingsQuery = useQuery({
-    enabled: isAuthenticated && user?.role === 'landlord',
+    enabled: isAuthenticated,
     queryFn: getMyListings,
     queryKey: ['listings', 'my'],
   })
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
-  }
-
-  if (user?.role !== 'landlord') {
-    return <Navigate to="/listings" replace />
   }
 
   const listings = myListingsQuery.data?.results ?? []
@@ -44,7 +40,6 @@ export function MyListingsPage() {
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{t('roles.landlord')}</p>
           <h1 className="text-3xl font-semibold text-slate-950">{t('myListings.title')}</h1>
           <p className="mt-2 text-slate-600">{t('myListings.subtitle')}</p>
         </div>

@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.analytics.models import ListingView, SearchQuery
-from apps.base.choices import UserRole
 from apps.listing.models import Listing
 from apps.users.models import User
 
@@ -13,7 +12,6 @@ class AnalyticsAPITests(APITestCase):
             email="landlord@example.com",
             password="StrongPass123!",
             name="Landlord",
-            role=UserRole.LANDLORD,
         )
         self.listing = Listing.objects.create(
             owner=self.landlord,
@@ -52,7 +50,6 @@ class AnalyticsAPITests(APITestCase):
             email="tenant@example.com",
             password="StrongPass123!",
             name="Tenant",
-            role=UserRole.TENANT,
         )
         SearchQuery.objects.create(user=tenant, keyword="berlin")
         ListingView.objects.create(user=tenant, listing=self.listing)

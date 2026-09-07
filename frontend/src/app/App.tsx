@@ -24,7 +24,7 @@ export function App() {
             <NavLink to="/listings" className="nav-link">
               {t('navigation.listings')}
             </NavLink>
-            {user?.role === 'landlord' ? (
+            {isAuthenticated ? (
               <NavLink to="/my/listings" className="nav-link">
                 {t('navigation.myListings')}
               </NavLink>
@@ -45,7 +45,7 @@ export function App() {
                 <UserRound size={18} aria-hidden="true" />
               </Link>
             )}
-            {user?.role === 'landlord' ? (
+            {isAuthenticated ? (
               <Link to="/listings/new" className="hidden items-center gap-2 rounded-md bg-slate-950 px-3 py-2 text-sm font-medium text-white md:flex">
                 <Plus size={16} aria-hidden="true" />
                 {t('listings.create')}

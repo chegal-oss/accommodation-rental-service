@@ -33,9 +33,9 @@ export function ListingDetailsPage() {
     queryKey: ['listing', listingId],
   })
   const tenantBookingsQuery = useQuery({
-    enabled: isAuthenticated && user?.role === 'tenant',
+    enabled: isAuthenticated,
     queryFn: getMyBookings,
-    queryKey: ['bookings', 'tenant', 'listing-detail'],
+    queryKey: ['bookings', 'mine', 'listing-detail'],
   })
   const fallbackListing = demoListings.find((listing) => String(listing.id) === listingId) ?? demoListings[0]
   const listing = listingQuery.data ?? {
@@ -55,7 +55,7 @@ export function ListingDetailsPage() {
         'https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1200&q=80',
         'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80',
       ]
-  const canRequestBooking = isAuthenticated && user?.role === 'tenant' && user.id !== listing.owner
+  const canRequestBooking = isAuthenticated && user?.id !== listing.owner
   const listingBookings = (tenantBookingsQuery.data?.results ?? []).filter((booking) => booking.listing === listing.id)
   const activeBooking = listingBookings.find((booking) => ['pending', 'confirmed'].includes(booking.status))
   const displayedBooking = activeBooking ?? listingBookings[0]
@@ -177,7 +177,7 @@ export function ListingDetailsPage() {
             <>
               {bookingError ? <p className="mt-3 text-sm text-red-700">{bookingError}</p> : null}
               <div className="mt-6 rounded-md border border-stone-200 bg-stone-50 p-3 text-sm text-slate-600">
-                {isAuthenticated ? t('bookings.tenantOnly') : t('bookings.signInRequired')}
+                {isAuthenticated ? t('bookings.ownListing') : t('bookings.signInRequired')}
               </div>
             </>
           )}

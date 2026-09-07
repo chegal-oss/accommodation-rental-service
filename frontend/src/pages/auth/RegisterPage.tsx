@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useAuth } from '@/features/auth/model/useAuth'
-import type { UserRole } from '@/features/auth/model/types'
 import { env } from '@/shared/config/env'
 import { TurnstileWidget } from '@/shared/ui/TurnstileWidget'
 
@@ -24,18 +23,12 @@ export function RegisterPage() {
     name: z.string().min(2, t('validation.minName')),
     password: z.string().min(8, t('validation.minPassword')),
     phone: z.string().optional(),
-    role: z.enum(['tenant', 'landlord']),
   })
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     register,
-  } = useForm<z.infer<typeof registerSchema>>({
-    defaultValues: {
-      role: 'tenant',
-    },
-    resolver: zodResolver(registerSchema),
-  })
+  } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema) })
   const isSubmitDisabled = isSubmitting || (env.captchaEnabled && (!isCaptchaConfigured || !captchaToken))
 
   const handleCaptchaVerify = useCallback((token: string) => {
@@ -94,7 +87,6 @@ export function RegisterPage() {
             try {
               await signUp({
                 ...values,
-                role: values.role as UserRole,
                 captcha_token: env.captchaEnabled ? captchaToken : undefined,
               })
               navigate('/profile')
@@ -143,15 +135,6 @@ export function RegisterPage() {
                 <input className="input pl-10" autoComplete="tel" {...register('phone')} />
               </div>
               {errors.phone ? <span className="form-error">{errors.phone.message}</span> : null}
-            </label>
-
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-slate-700">{t('auth.role')}</span>
-              <select className="input" {...register('role')}>
-                <option value="tenant">{t('roles.tenant')}</option>
-                <option value="landlord">{t('roles.landlord')}</option>
-              </select>
-              {errors.role ? <span className="form-error">{errors.role.message}</span> : null}
             </label>
 
             <label className="block">

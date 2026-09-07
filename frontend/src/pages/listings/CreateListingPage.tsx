@@ -8,17 +8,13 @@ import { useAuth } from '@/features/auth/model/useAuth'
 
 export function CreateListingPage() {
   const { t } = useTranslation()
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
-  }
-
-  if (user?.role !== 'landlord') {
-    return <Navigate to="/listings" replace />
   }
 
   async function handleSubmit(values: ListingCreateRequest, images: ListingImageUpload[]) {
@@ -47,7 +43,6 @@ export function CreateListingPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{t('roles.landlord')}</p>
         <h1 className="text-3xl font-semibold text-slate-950">{t('listingForm.createTitle')}</h1>
         <p className="mt-3 max-w-2xl leading-7 text-slate-600">{t('listingForm.createSubtitle')}</p>
       </div>

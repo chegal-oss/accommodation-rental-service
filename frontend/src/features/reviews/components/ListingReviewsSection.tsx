@@ -26,9 +26,9 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     queryKey: ['reviews', listingId],
   })
   const bookingsQuery = useQuery({
-    enabled: isAuthenticated && user?.role === 'tenant',
+    enabled: isAuthenticated,
     queryFn: getMyBookings,
-    queryKey: ['bookings', 'tenant', 'review-eligibility'],
+    queryKey: ['bookings', 'mine', 'review-eligibility'],
   })
   const eligibleBooking = bookingsQuery.data?.results.find((booking) => isCompletedConfirmedBookingForListing(booking, listingId))
   const confirmedBooking = bookingsQuery.data?.results.find((booking) => booking.listing === listingId && booking.status === 'confirmed')
@@ -40,7 +40,6 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     currentUserReview,
     eligibleBooking,
     isAuthenticated,
-    role: user?.role,
   })
 
   async function handleReviewSubmit(rating: number, comment: string) {
@@ -174,16 +173,11 @@ type ReviewAvailabilityParams = {
   currentUserReview?: Review
   eligibleBooking?: Booking
   isAuthenticated: boolean
-  role?: string
 }
 
-function getReviewAvailabilityKey({ confirmedBooking, currentUserReview, eligibleBooking, isAuthenticated, role }: ReviewAvailabilityParams) {
+function getReviewAvailabilityKey({ confirmedBooking, currentUserReview, eligibleBooking, isAuthenticated }: ReviewAvailabilityParams) {
   if (!isAuthenticated) {
     return 'reviews.signInToReview'
-  }
-
-  if (role !== 'tenant') {
-    return 'reviews.tenantOnly'
   }
 
   if (currentUserReview) {

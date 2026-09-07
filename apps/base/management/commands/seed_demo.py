@@ -13,7 +13,7 @@ from django.utils import timezone
 from PIL import Image
 
 from apps.analytics.models import ListingView, SearchQuery
-from apps.base.choices import BookingStatus, HousingType, UserRole
+from apps.base.choices import BookingStatus, HousingType
 from apps.base.constants import LISTING_IMAGE_UPLOAD_PATH
 from apps.bookings.models import Booking
 from apps.listing.models import Listing, ListingImage
@@ -465,11 +465,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         landlords = [
-            self._get_or_create_user(email, name, phone, UserRole.LANDLORD)
+            self._get_or_create_user(email, name, phone)
             for email, name, phone in LANDLORDS
         ]
         tenants = [
-            self._get_or_create_user(email, name, phone, UserRole.TENANT)
+            self._get_or_create_user(email, name, phone)
             for email, name, phone in TENANTS
         ]
 
@@ -485,13 +485,12 @@ class Command(BaseCommand):
         self.stdout.write("Landlord: landlord@example.com / DemoPass123!")
         self.stdout.write("Tenant: tenant@example.com / DemoPass123!")
 
-    def _get_or_create_user(self, email, name, phone, role):
+    def _get_or_create_user(self, email, name, phone):
         user, created = User.objects.get_or_create(
             email=email,
             defaults={
                 "name": name,
                 "phone": phone,
-                "role": role,
             },
         )
 
@@ -502,10 +501,6 @@ class Command(BaseCommand):
         if user.phone != phone:
             user.phone = phone
             update_fields.append("phone")
-        if user.role != role:
-            user.role = role
-            update_fields.append("role")
-
         if created:
             user.set_password(DEMO_PASSWORD)
             user.save()

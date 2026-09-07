@@ -2,11 +2,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class UserRole(models.TextChoices):
-    TENANT = "tenant", _("Tenant")
-    LANDLORD = "landlord", _("Landlord")
-
-
 class HousingType(models.TextChoices):
     APARTMENT = "apartment", _("Apartment")
     HOUSE = "house", _("House")

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { LogOut, Mail, Pencil, Phone, ShieldCheck, UserRound } from 'lucide-react'
+import { LogOut, Mail, Pencil, Phone, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -81,7 +81,6 @@ export function ProfilePage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <ProfileField icon={<Mail size={17} aria-hidden="true" />} label={t('auth.email')} value={user?.email ?? ''} />
             <ProfileField icon={<Phone size={17} aria-hidden="true" />} label={t('auth.phone')} value={user?.phone || t('profile.notSet')} />
-            <ProfileField icon={<ShieldCheck size={17} aria-hidden="true" />} label={t('auth.role')} value={user ? t(`roles.${user.role}`) : ''} />
             <ProfileField icon={<UserRound size={17} aria-hidden="true" />} label={t('profile.userId')} value={String(user?.id ?? '')} />
           </div>
         )}

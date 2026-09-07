@@ -63,6 +63,7 @@ class BookingListSerializer(BookingPriceAndContactMixin):
             "listing",
             "listing_title",
             "listing_price",
+            "tenant",
             "nights",
             "total_price",
             "contact_name",

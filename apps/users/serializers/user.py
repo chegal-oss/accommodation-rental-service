@@ -11,7 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "name",
             "phone",
-            "role",
             "created_at",
             "updated_at",
         )
@@ -26,8 +25,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "email",
             "name",
             "phone",
-            "role",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "email", "role", "created_at", "updated_at")
+        read_only_fields = ("id", "email", "created_at", "updated_at")

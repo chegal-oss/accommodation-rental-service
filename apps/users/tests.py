@@ -2,7 +2,6 @@ from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.base.choices import UserRole
 from apps.users.models import User
 
 
@@ -15,7 +14,6 @@ class UserAuthAPITests(APITestCase):
                 "email": "tenant@example.com",
                 "name": "Tenant",
                 "phone": "+49123456789",
-                "role": UserRole.TENANT,
                 "password": "StrongPass123!",
             },
             format="json",
@@ -43,7 +41,6 @@ class UserAuthAPITests(APITestCase):
             email="tenant@example.com",
             password="StrongPass123!",
             name="Tenant",
-            role=UserRole.TENANT,
         )
         self.client.force_authenticate(user=user)
 
@@ -59,7 +56,6 @@ class UserAuthAPITests(APITestCase):
                 "email": "tenant@example.com",
                 "name": "Tenant",
                 "phone": "bad",
-                "role": UserRole.TENANT,
                 "password": "StrongPass123!",
             },
             HTTP_ACCEPT_LANGUAGE="ru",

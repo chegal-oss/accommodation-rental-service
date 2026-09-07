@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.base.choices import BookingStatus, UserRole
+from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
 from apps.listing.models import Listing
 from apps.users.models import User
@@ -17,21 +17,18 @@ class BookingAPITests(APITestCase):
             password="StrongPass123!",
             name="Tenant",
             phone="+49111111111",
-            role=UserRole.TENANT,
         )
         self.landlord = User.objects.create_user(
             email="landlord@example.com",
             password="StrongPass123!",
             name="Landlord",
             phone="+49222222222",
-            role=UserRole.LANDLORD,
         )
         self.other_landlord = User.objects.create_user(
             email="other-landlord@example.com",
             password="StrongPass123!",
             name="Other Landlord",
             phone="+49333333333",
-            role=UserRole.LANDLORD,
         )
         self.listing = Listing.objects.create(
             owner=self.landlord,
@@ -65,7 +62,7 @@ class BookingAPITests(APITestCase):
         booking.refresh_from_db()
         self.assertEqual(booking.status, BookingStatus.CONFIRMED)
 
-    def test_landlord_cannot_create_booking(self):
+    def test_user_cannot_book_own_listing(self):
         self.client.force_authenticate(user=self.landlord)
 
         response = self.client.post(
@@ -74,7 +71,7 @@ class BookingAPITests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_landlord_cannot_confirm_other_landlord_booking(self):
         booking = Booking.objects.create(

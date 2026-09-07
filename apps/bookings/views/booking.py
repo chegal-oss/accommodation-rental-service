@@ -8,9 +8,9 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.base.choices import BookingStatus, UserRole
+from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
-from apps.bookings.permissions import IsBookingParticipant, IsTenant
+from apps.bookings.permissions import IsBookingParticipant
 from apps.bookings.serializers import (
     BookingCreateSerializer,
     BookingDetailSerializer,
@@ -39,7 +39,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            return (IsTenant(),)
+            return (IsAuthenticated(),)
 
         return (IsAuthenticated(), IsBookingParticipant())
 
@@ -78,7 +78,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="confirm")
     def confirm(self, request, pk=None):
         booking = self.get_object()
-        self._ensure_landlord(request, booking)
+        self._ensure_listing_owner(request, booking)
         self._ensure_pending(booking)
 
         booking.status = BookingStatus.CONFIRMED
@@ -92,7 +92,7 @@ class BookingViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="reject")
     def reject(self, request, pk=None):
         booking = self.get_object()
-        self._ensure_landlord(request, booking)
+        self._ensure_listing_owner(request, booking)
         self._ensure_pending(booking)
 
         booking.status = BookingStatus.REJECTED
@@ -126,11 +126,8 @@ class BookingViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def _ensure_landlord(self, request, booking):
-        if (
-            request.user.role != UserRole.LANDLORD
-            or booking.listing.owner_id != request.user.id
-        ):
+    def _ensure_listing_owner(self, request, booking):
+        if booking.listing.owner_id != request.user.id:
             raise PermissionDenied(_("You can manage only bookings for your listings."))
 
     def _ensure_pending(self, booking):

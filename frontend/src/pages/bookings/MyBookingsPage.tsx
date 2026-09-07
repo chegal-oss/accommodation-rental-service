@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate } from 'react-router-dom'
-import { cancelBooking, confirmBooking, getBookings, getMyBookings, rejectBooking } from '@/features/bookings/api/bookingsApi'
+import { cancelBooking, confirmBooking, getBookings, rejectBooking } from '@/features/bookings/api/bookingsApi'
 import { BookingCard } from '@/features/bookings/components/BookingCard'
 import type { Booking, BookingStatus } from '@/features/bookings/model/types'
 import { useAuth } from '@/features/auth/model/useAuth'
@@ -15,11 +15,10 @@ export function MyBookingsPage() {
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
   const [cancelError, setCancelError] = useState<string | null>(null)
   const [isCancelSubmitting, setIsCancelSubmitting] = useState(false)
-  const isLandlord = user?.role === 'landlord'
   const bookingsQuery = useQuery({
     enabled: isAuthenticated,
-    queryFn: isLandlord ? getBookings : getMyBookings,
-    queryKey: ['bookings', isLandlord ? 'landlord' : 'tenant'],
+    queryFn: getBookings,
+    queryKey: ['bookings', 'all'],
   })
 
   if (!isAuthenticated) {
@@ -60,9 +59,8 @@ export function MyBookingsPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{isLandlord ? t('roles.landlord') : t('roles.tenant')}</p>
-        <h1 className="text-3xl font-semibold text-slate-950">{isLandlord ? t('bookings.landlordTitle') : t('bookings.myTitle')}</h1>
-        <p className="mt-2 text-slate-600">{isLandlord ? t('bookings.landlordSubtitle') : t('bookings.mySubtitle')}</p>
+        <h1 className="text-3xl font-semibold text-slate-950">{t('bookings.title')}</h1>
+        <p className="mt-2 text-slate-600">{t('bookings.subtitle')}</p>
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -93,7 +91,7 @@ export function MyBookingsPage() {
           <BookingCard
             booking={booking}
             key={booking.id}
-            mode={isLandlord ? 'landlord' : 'tenant'}
+            mode={booking.tenant === user?.id ? 'tenant' : 'landlord'}
             onCancel={openCancelDialog}
             onConfirm={(item) => void refetchAfter(confirmBooking(item.id))}
             onReject={(item) => void refetchAfter(rejectBooking(item.id))}

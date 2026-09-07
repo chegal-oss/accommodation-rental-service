@@ -16,7 +16,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "email",
             "name",
             "phone",
-            "role",
             "password",
             "captcha_token",
             "created_at",

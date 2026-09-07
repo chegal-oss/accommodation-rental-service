@@ -7,14 +7,14 @@ from apps.users.models import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ("email", "name", "phone", "role", "is_active", "is_staff")
-    list_filter = ("role", "is_active", "is_staff", "is_superuser")
+    list_display = ("email", "name", "phone", "is_active", "is_staff")
+    list_filter = ("is_active", "is_staff", "is_superuser")
     search_fields = ("email", "name", "phone")
     ordering = ("email",)
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": ("name", "phone", "role")}),
+        (_("Personal info"), {"fields": ("name", "phone")}),
         (_("Permissions"), {"fields": ("is_active", "is_staff", "is_superuser")}),
         (_("Important dates"), {"fields": ("last_login", "created_at", "updated_at")}),
     )
@@ -27,7 +27,6 @@ class UserAdmin(BaseUserAdmin):
                     "email",
                     "name",
                     "phone",
-                    "role",
                     "password1",
                     "password2",
                 ),

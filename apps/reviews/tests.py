@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.base.choices import BookingStatus, UserRole
+from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
 from apps.listing.models import Listing
 from apps.reviews.models import Review
@@ -17,13 +17,11 @@ class ReviewAPITests(APITestCase):
             email="tenant@example.com",
             password="StrongPass123!",
             name="Tenant",
-            role=UserRole.TENANT,
         )
         self.landlord = User.objects.create_user(
             email="landlord@example.com",
             password="StrongPass123!",
             name="Landlord",
-            role=UserRole.LANDLORD,
         )
         self.listing = Listing.objects.create(
             owner=self.landlord,
@@ -56,7 +54,7 @@ class ReviewAPITests(APITestCase):
         self.assertEqual(review.user, self.tenant)
         self.assertEqual(review.booking, booking)
 
-    def test_landlord_cannot_create_review(self):
+    def test_user_cannot_review_someone_elses_booking(self):
         booking = self._completed_booking()
         self.client.force_authenticate(user=self.landlord)
 
@@ -70,7 +68,7 @@ class ReviewAPITests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_review_cannot_be_created_for_active_booking(self):
         booking = Booking.objects.create(

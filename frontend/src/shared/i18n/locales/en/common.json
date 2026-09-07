@@ -29,9 +29,8 @@
     "password": "Password",
     "phone": "Phone",
     "registrationFailed": "Could not create account. Check the form and try again.",
-    "registerSubtitle": "Choose a tenant account to book homes or a landlord account to publish and manage listings.",
+    "registerSubtitle": "Book homes, publish listings and manage your rental activity from one account.",
     "registerTitle": "Create an account for renting or publishing homes",
-    "role": "Role",
     "signIn": "Sign in",
     "signingIn": "Signing in..."
   },
@@ -52,19 +51,19 @@
     "emptySubtitle": "Booking requests and completed bookings will appear here.",
     "emptyTitle": "No bookings yet",
     "endDate": "End date",
-    "landlordSubtitle": "Confirm or reject booking requests for your listings.",
-    "landlordTitle": "Listing bookings",
     "mySubtitle": "Track active and completed booking requests.",
     "myTitle": "My bookings",
+    "ownListing": "You cannot book your own listing.",
     "priceBreakdown": "{{price}} x {{count}} nights",
     "reject": "Reject",
     "requestBooking": "Request booking",
     "requestCreated": "Booking request created.",
     "requestFailed": "Could not create booking request.",
     "requesting": "Sending request...",
-    "signInRequired": "Sign in as a tenant to request a booking.",
+    "signInRequired": "Sign in to request a booking.",
     "startDate": "Start date",
-    "tenantOnly": "Only tenants can request bookings for listings.",
+    "subtitle": "Track your booking requests and requests for your listings.",
+    "title": "Bookings",
     "totalPrice": "Total"
   },
   "common": {
@@ -97,8 +96,7 @@
       "postal_code": "Postal code",
       "price": "Price",
       "rating": "Rating",
-      "rooms": "Rooms",
-      "role": "Role"
+      "rooms": "Rooms"
     },
     "requestFailed": "Request failed"
   },
@@ -176,7 +174,7 @@
     "emptySubtitle": "Create your first listing and it will appear here.",
     "emptyTitle": "No listings yet",
     "hide": "Hide",
-    "subtitle": "Manage the properties you publish as a landlord.",
+    "subtitle": "Manage the properties you publish.",
     "title": "My listings"
   },
   "navigation": {
@@ -206,10 +204,6 @@
     "priceAsc": "Price: low to high",
     "priceDesc": "Price: high to low"
   },
-  "roles": {
-    "landlord": "Landlord",
-    "tenant": "Tenant"
-  },
   "reviews": {
     "actions": "Review actions",
     "afterStay": "You can leave a review after the confirmed booking end date.",
@@ -223,9 +217,8 @@
     "deleteFailed": "Could not delete review.",
     "saveFailed": "Could not save review.",
     "saving": "Saving...",
-    "signInToReview": "Sign in as a tenant to leave a review after your stay.",
+    "signInToReview": "Sign in to leave a review after your stay.",
     "submit": "Submit review",
-    "tenantOnly": "Only tenants can leave reviews for listings.",
     "title": "Reviews",
     "update": "Update review"
   },

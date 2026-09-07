@@ -59,7 +59,6 @@ jobs:
           DOCKER_SUPERUSER_PASSWORD: ${{ secrets.DOCKER_SUPERUSER_PASSWORD }}
           DOCKER_SUPERUSER_NAME: ${{ vars.DOCKER_SUPERUSER_NAME || 'Admin' }}
           DOCKER_SUPERUSER_PHONE: ${{ vars.DOCKER_SUPERUSER_PHONE || '' }}
-          DOCKER_SUPERUSER_ROLE: ${{ vars.DOCKER_SUPERUSER_ROLE || 'landlord' }}
           DOCKER_SEED_DEMO: ${{ vars.DOCKER_SEED_DEMO || 'False' }}
           DOCKER_DRF_ANON_THROTTLE_RATE: ${{ vars.DOCKER_DRF_ANON_THROTTLE_RATE || '300/hour' }}
           DOCKER_DRF_USER_THROTTLE_RATE: ${{ vars.DOCKER_DRF_USER_THROTTLE_RATE || '3000/hour' }}
@@ -96,7 +95,6 @@ jobs:
             printf 'DOCKER_SUPERUSER_PASSWORD=%s\n' "$DOCKER_SUPERUSER_PASSWORD"
             printf 'DOCKER_SUPERUSER_NAME=%s\n' "$DOCKER_SUPERUSER_NAME"
             printf 'DOCKER_SUPERUSER_PHONE=%s\n' "$DOCKER_SUPERUSER_PHONE"
-            printf 'DOCKER_SUPERUSER_ROLE=%s\n' "$DOCKER_SUPERUSER_ROLE"
             printf 'DOCKER_SEED_DEMO=%s\n' "$DOCKER_SEED_DEMO"
           } > .env.prod.deploy
 

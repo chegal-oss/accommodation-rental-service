@@ -2,7 +2,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.base.choices import UserRole
 from apps.listing.models import Listing, ListingImage
 from apps.users.models import User
 
@@ -13,19 +12,16 @@ class ListingAPITests(APITestCase):
             email="tenant@example.com",
             password="StrongPass123!",
             name="Tenant",
-            role=UserRole.TENANT,
         )
         self.landlord = User.objects.create_user(
             email="landlord@example.com",
             password="StrongPass123!",
             name="Landlord",
-            role=UserRole.LANDLORD,
         )
         self.other_landlord = User.objects.create_user(
             email="other-landlord@example.com",
             password="StrongPass123!",
             name="Other Landlord",
-            role=UserRole.LANDLORD,
         )
 
     def test_landlord_can_create_listing(self):
@@ -43,8 +39,7 @@ class ListingAPITests(APITestCase):
         self.assertEqual(listing.owner, self.landlord)
         self.assertEqual(listing.postal_code, "10115")
 
-    def test_tenant_cannot_create_listing(self):
-        self.client.force_authenticate(user=self.tenant)
+    def test_anonymous_user_cannot_create_listing(self):
 
         response = self.client.post(
             "/api/v1/listings/",
@@ -52,7 +47,7 @@ class ListingAPITests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_landlord_cannot_update_other_landlord_listing(self):
         listing = Listing.objects.create(owner=self.landlord, **self._listing_data())

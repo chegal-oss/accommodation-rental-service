@@ -239,7 +239,6 @@ DOCKER_SUPERUSER_EMAIL=admin@example.com
 DOCKER_SUPERUSER_PASSWORD=<strong-admin-password>
 DOCKER_SUPERUSER_NAME=Admin
 DOCKER_SUPERUSER_PHONE=
-DOCKER_SUPERUSER_ROLE=landlord
 ```
 
 The startup command is idempotent: if this user already exists, it will not
@@ -328,7 +327,6 @@ DEPLOY_PATH=/opt/homerent
 DEPLOY_HEALTH_URL=https://chegal.duckdns.org/api/schema/
 DOCKER_SUPERUSER_NAME=Admin
 DOCKER_SUPERUSER_PHONE=
-DOCKER_SUPERUSER_ROLE=landlord
 DOCKER_SEED_DEMO=False
 DOCKER_DRF_ANON_THROTTLE_RATE=300/hour
 DOCKER_DRF_USER_THROTTLE_RATE=3000/hour

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from apps.analytics.models import ListingView, SearchQuery
 from apps.listing.filters import ListingFilter
 from apps.listing.models import Listing
-from apps.listing.permissions import IsLandlordOrReadOnly, IsOwnerOrReadOnly
+from apps.listing.permissions import IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
 from apps.listing.serializers import (
     ListingCreateUpdateSerializer,
     ListingDetailSerializer,
@@ -22,7 +22,7 @@ from apps.reviews.serializers import ReviewListSerializer
 
 
 class ListingViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsLandlordOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     filter_backends = (
         DjangoFilterBackend,
         filters.SearchFilter,

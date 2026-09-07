@@ -44,8 +44,8 @@ export function EditListingPage() {
     return <Navigate to="/login" replace />
   }
 
-  if (user?.role !== 'landlord') {
-    return <Navigate to="/listings" replace />
+  if (!user) {
+    return <div className="mx-auto max-w-5xl px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8">{t('common.loading')}</div>
   }
 
   if (listingQuery.data && listingQuery.data.owner !== user.id) {
@@ -102,7 +102,6 @@ export function EditListingPage() {
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-7">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">{t('roles.landlord')}</p>
         <h1 className="text-3xl font-semibold text-slate-950">{t('listingForm.editTitle')}</h1>
         <p className="mt-3 max-w-2xl leading-7 text-slate-600">{t('listingForm.editSubtitle')}</p>
       </div>

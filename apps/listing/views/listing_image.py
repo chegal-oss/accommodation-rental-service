@@ -2,15 +2,16 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 
 from apps.listing.models import ListingImage
-from apps.listing.permissions import IsLandlord, IsListingImageOwner
+from apps.listing.permissions import IsListingImageOwner
 from apps.listing.serializers import ListingImageSerializer
 
 
 class ListingImageViewSet(viewsets.ModelViewSet):
     serializer_class = ListingImageSerializer
-    permission_classes = (IsLandlord, IsListingImageOwner)
+    permission_classes = (IsAuthenticated, IsListingImageOwner)
     parser_classes = (JSONParser, MultiPartParser, FormParser)
 
     def get_queryset(self):

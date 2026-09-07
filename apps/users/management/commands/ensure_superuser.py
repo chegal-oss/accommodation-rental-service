@@ -3,8 +3,6 @@ import os
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.base.choices import UserRole
-
 
 class Command(BaseCommand):
     help = "Create a superuser from environment variables if it does not exist."
@@ -24,10 +22,6 @@ class Command(BaseCommand):
 
         name = os.getenv("DJANGO_SUPERUSER_NAME", "Admin").strip() or "Admin"
         phone = os.getenv("DJANGO_SUPERUSER_PHONE", "").strip()
-        role = os.getenv("DJANGO_SUPERUSER_ROLE", UserRole.LANDLORD).strip()
-
-        if role not in UserRole.values:
-            raise CommandError(f"Unsupported superuser role: {role}")
 
         User = get_user_model()
         user = User.objects.filter(email=email).first()
@@ -38,7 +32,6 @@ class Command(BaseCommand):
                 password=password,
                 name=name,
                 phone=phone,
-                role=role,
             )
             self.stdout.write(self.style.SUCCESS(f"Superuser created: {email}"))
             return
