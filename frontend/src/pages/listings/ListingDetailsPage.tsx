@@ -24,6 +24,8 @@ export function ListingDetailsPage() {
   const [isBookingSubmitting, setIsBookingSubmitting] = useState(false)
   const [bookingSuccess, setBookingSuccess] = useState(false)
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
+  const [cancelError, setCancelError] = useState<string | null>(null)
+  const [isCancelSubmitting, setIsCancelSubmitting] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const listingQuery = useQuery({
     enabled: Boolean(listingId),
@@ -81,15 +83,29 @@ export function ListingDetailsPage() {
 
   async function handleCancelBooking(booking: Booking) {
     setBookingError(null)
+    setCancelError(null)
+    setIsCancelSubmitting(true)
 
     try {
       await cancelBooking(booking.id)
-      setBookingToCancel(null)
+      closeCancelDialog()
       setBookingSuccess(false)
       await tenantBookingsQuery.refetch()
     } catch (requestError) {
-      setBookingError(requestError instanceof Error ? requestError.message : t('errors.requestFailed'))
+      setCancelError(requestError instanceof Error ? requestError.message : t('errors.requestFailed'))
+    } finally {
+      setIsCancelSubmitting(false)
     }
+  }
+
+  function openCancelDialog(booking: Booking) {
+    setCancelError(null)
+    setBookingToCancel(booking)
+  }
+
+  function closeCancelDialog() {
+    setCancelError(null)
+    setBookingToCancel(null)
   }
 
   return (
@@ -149,7 +165,7 @@ export function ListingDetailsPage() {
           </div>
           {bookingSuccess && !displayedBooking ? <div className="mt-6 rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">{t('bookings.requestCreated')}</div> : null}
 
-          {displayedBooking ? <BookingSummaryCard booking={displayedBooking} onCancel={setBookingToCancel} /> : null}
+          {displayedBooking ? <BookingSummaryCard booking={displayedBooking} onCancel={openCancelDialog} /> : null}
 
           {activeBooking ? (
             bookingError ? <p className="mt-3 text-sm text-red-700">{bookingError}</p> : null
@@ -174,9 +190,11 @@ export function ListingDetailsPage() {
         cancelLabel={t('common.cancel')}
         confirmLabel={t('bookings.cancel')}
         description={t('bookings.cancelConfirmDescription')}
+        error={cancelError}
         isOpen={Boolean(bookingToCancel)}
+        isSubmitting={isCancelSubmitting}
         title={t('bookings.cancelConfirmTitle')}
-        onCancel={() => setBookingToCancel(null)}
+        onCancel={closeCancelDialog}
         onConfirm={() => {
           if (bookingToCancel) {
             void handleCancelBooking(bookingToCancel)

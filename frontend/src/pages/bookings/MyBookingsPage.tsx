@@ -13,6 +13,8 @@ export function MyBookingsPage() {
   const { isAuthenticated, user } = useAuth()
   const [statusFilter, setStatusFilter] = useState<BookingStatus | 'all'>('all')
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null)
+  const [cancelError, setCancelError] = useState<string | null>(null)
+  const [isCancelSubmitting, setIsCancelSubmitting] = useState(false)
   const isLandlord = user?.role === 'landlord'
   const bookingsQuery = useQuery({
     enabled: isAuthenticated,
@@ -31,9 +33,28 @@ export function MyBookingsPage() {
     await bookingsQuery.refetch()
   }
 
-  async function handleCancelConfirmed(booking: Booking) {
-    await refetchAfter(cancelBooking(booking.id))
+  function openCancelDialog(booking: Booking) {
+    setCancelError(null)
+    setBookingToCancel(booking)
+  }
+
+  function closeCancelDialog() {
+    setCancelError(null)
     setBookingToCancel(null)
+  }
+
+  async function handleCancelBooking(booking: Booking) {
+    setCancelError(null)
+    setIsCancelSubmitting(true)
+
+    try {
+      await refetchAfter(cancelBooking(booking.id))
+      closeCancelDialog()
+    } catch (requestError) {
+      setCancelError(requestError instanceof Error ? requestError.message : t('errors.requestFailed'))
+    } finally {
+      setIsCancelSubmitting(false)
+    }
   }
 
   return (
@@ -73,7 +94,7 @@ export function MyBookingsPage() {
             booking={booking}
             key={booking.id}
             mode={isLandlord ? 'landlord' : 'tenant'}
-            onCancel={setBookingToCancel}
+            onCancel={openCancelDialog}
             onConfirm={(item) => void refetchAfter(confirmBooking(item.id))}
             onReject={(item) => void refetchAfter(rejectBooking(item.id))}
           />
@@ -83,12 +104,14 @@ export function MyBookingsPage() {
         cancelLabel={t('common.cancel')}
         confirmLabel={t('bookings.cancel')}
         description={t('bookings.cancelConfirmDescription')}
+        error={cancelError}
         isOpen={Boolean(bookingToCancel)}
+        isSubmitting={isCancelSubmitting}
         title={t('bookings.cancelConfirmTitle')}
-        onCancel={() => setBookingToCancel(null)}
+        onCancel={closeCancelDialog}
         onConfirm={() => {
           if (bookingToCancel) {
-            void handleCancelConfirmed(bookingToCancel)
+            void handleCancelBooking(bookingToCancel)
           }
         }}
       />

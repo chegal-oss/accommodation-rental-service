@@ -1,6 +1,7 @@
 import { CalendarDays, Mail, Phone } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { BookingStatusBadge } from '@/features/bookings/components/BookingStatusBadge'
+import { canCancelBooking } from '@/features/bookings/lib/canCancelBooking'
 import type { Booking } from '@/features/bookings/model/types'
 import { formatMoney } from '@/shared/lib/formatMoney'
 
@@ -11,7 +12,7 @@ type BookingSummaryCardProps = {
 
 export function BookingSummaryCard({ booking, onCancel }: BookingSummaryCardProps) {
   const { t } = useTranslation()
-  const canCancel = ['pending', 'confirmed'].includes(booking.status)
+  const canCancel = canCancelBooking(booking)
   const totalPrice = booking.total_price ? formatMoney(booking.total_price) : null
   const listingPrice = booking.listing_price ? formatMoney(booking.listing_price) : null
 
