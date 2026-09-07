@@ -36,6 +36,8 @@ class Review(TimeStampModel):
     )
     booking = models.OneToOneField(
         Booking,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
         related_name="review",
         verbose_name=_("booking"),

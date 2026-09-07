@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from config.views import FrontendAppView
+from config.views import FrontendAppView, PublicConfigView
 
 urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
@@ -30,6 +30,7 @@ urlpatterns = [
     path("api/v1/", include("apps.listing.urls")),
     path("api/v1/", include("apps.reviews.urls")),
     path("api/v1/", include("apps.users.urls")),
+    path("api/v1/config/", PublicConfigView.as_view(), name="public-config"),
     path("admin/", admin.site.urls),
 ]
 

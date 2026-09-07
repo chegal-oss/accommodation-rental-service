@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.base.choices import BookingStatus
 from apps.base.constants import MAX_REVIEW_RATING, MIN_REVIEW_RATING
+from apps.bookings.models import Booking
 from apps.reviews.models import Review
 
 
@@ -53,6 +55,11 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
+    booking = serializers.PrimaryKeyRelatedField(
+        allow_null=True,
+        queryset=Booking.objects.all(),
+        required=False,
+    )
     cleanliness_rating = serializers.IntegerField(
         max_value=MAX_REVIEW_RATING,
         min_value=MIN_REVIEW_RATING,
@@ -96,7 +103,11 @@ class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(_("Booking cannot be changed."))
 
         if not listing or not booking:
-            return attrs
+            if settings.DEBUG and listing:
+                self._validate_unique_listing_review(listing=listing, user=user)
+                return attrs
+
+            raise serializers.ValidationError(_("Booking is required."))
 
         if listing.owner_id == user.id:
             raise serializers.ValidationError(_("You cannot review your own listing."))
@@ -121,6 +132,11 @@ class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
                 _("Booking must be completed before review.")
             )
 
+        self._validate_unique_listing_review(listing=listing, user=user)
+
+        return attrs
+
+    def _validate_unique_listing_review(self, listing, user):
         existing_reviews = Review.objects.filter(listing=listing, user=user)
         if self.instance:
             existing_reviews = existing_reviews.exclude(pk=self.instance.pk)
@@ -129,5 +145,3 @@ class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 _("You have already reviewed this listing.")
             )
-
-        return attrs

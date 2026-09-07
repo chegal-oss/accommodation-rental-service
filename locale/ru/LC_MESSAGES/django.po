@@ -296,6 +296,10 @@ msgid "Booking must be completed before review."
 msgstr "Бронирование должно быть завершено перед отзывом."
 
 #: apps/reviews/serializers/review.py:104
+msgid "Booking is required."
+msgstr "Для отзыва требуется бронирование."
+
+#: apps/reviews/serializers/review.py:104
 msgid "You have already reviewed this listing."
 msgstr "Вы уже оставили отзыв для этого объявления."
 

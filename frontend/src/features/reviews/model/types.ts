@@ -24,6 +24,6 @@ export type Review = {
 
 export type ReviewCreateRequest = ReviewRatings & {
   listing: number
-  booking: number
+  booking?: number
   comment: string
 }

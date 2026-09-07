@@ -10,6 +10,7 @@ import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewForm } from '@/features/reviews/components/ReviewForm'
 import type { Review, ReviewRatings } from '@/features/reviews/model/types'
 import { useAuth } from '@/features/auth/model/useAuth'
+import { getPublicConfig } from '@/shared/api/publicConfigApi'
 
 type ListingReviewsSectionProps = {
   listingId: number
@@ -30,11 +31,16 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     queryFn: getMyBookings,
     queryKey: ['bookings', 'mine', 'review-eligibility'],
   })
+  const publicConfigQuery = useQuery({
+    queryFn: getPublicConfig,
+    queryKey: ['public-config'],
+  })
   const eligibleBooking = bookingsQuery.data?.results.find((booking) => isCompletedConfirmedBookingForListing(booking, listingId))
   const confirmedBooking = bookingsQuery.data?.results.find((booking) => booking.listing === listingId && booking.status === 'confirmed')
   const reviews = reviewsQuery.data ?? []
   const currentUserReview = reviews.find((review) => user?.email === review.user_email)
-  const canCreateReview = Boolean(eligibleBooking) && !currentUserReview
+  const canCreateDebugReview = Boolean(publicConfigQuery.data?.debug && isAuthenticated && !currentUserReview)
+  const canCreateReview = (Boolean(eligibleBooking) || canCreateDebugReview) && !currentUserReview
   const reviewAvailabilityKey = getReviewAvailabilityKey({
     confirmedBooking,
     currentUserReview,
@@ -43,7 +49,7 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
   })
 
   async function handleReviewSubmit(ratings: ReviewRatings, comment: string) {
-    if (!eligibleBooking) {
+    if (!eligibleBooking && !canCreateDebugReview) {
       return
     }
 
@@ -51,8 +57,10 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     setIsSubmitting(true)
 
     try {
+      const bookingPayload = eligibleBooking ? { booking: eligibleBooking.id } : {}
+
       await createReview({
-        booking: eligibleBooking.id,
+        ...bookingPayload,
         comment,
         listing: listingId,
         ...ratings,

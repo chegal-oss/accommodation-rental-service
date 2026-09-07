@@ -1,6 +1,7 @@
 from datetime import timedelta
 from decimal import Decimal
 
+from django.test import override_settings
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -99,6 +100,39 @@ class ReviewAPITests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_booking_is_required_for_review_without_debug(self):
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/reviews/",
+            {
+                "listing": self.listing.id,
+                **REVIEW_RATING_PAYLOAD,
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(DEBUG=True)
+    def test_debug_user_can_review_listing_without_booking(self):
+        self.client.force_authenticate(user=self.landlord)
+
+        response = self.client.post(
+            "/api/v1/reviews/",
+            {
+                "listing": self.listing.id,
+                **REVIEW_RATING_PAYLOAD,
+                "comment": "Debug review",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        review = Review.objects.get()
+        self.assertIsNone(review.booking)
+        self.assertEqual(review.user, self.landlord)
 
     def test_review_cannot_be_created_twice_for_same_booking(self):
         booking = self._completed_booking()
