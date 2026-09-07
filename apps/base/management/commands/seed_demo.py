@@ -679,9 +679,11 @@ class Command(BaseCommand):
 
                 Review.objects.create(
                     booking=booking,
+                    cleanliness_rating=8 + ((listing_index + review_index + 1) % 3),
+                    expectations_rating=8 + ((listing_index + review_index) % 3),
                     listing=listing,
+                    location_rating=7 + ((listing_index + review_index + 2) % 4),
                     user=tenant,
-                    rating=4 + ((listing_index + review_index) % 2),
                     comment=REVIEW_COMMENTS[
                         (listing_index + review_index) % len(REVIEW_COMMENTS)
                     ],

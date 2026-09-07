@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.utils import timezone
 from rest_framework import status
@@ -9,6 +10,12 @@ from apps.bookings.models import Booking
 from apps.listing.models import Listing
 from apps.reviews.models import Review
 from apps.users.models import User
+
+REVIEW_RATING_PAYLOAD = {
+    "cleanliness_rating": 8,
+    "expectations_rating": 10,
+    "location_rating": 7,
+}
 
 
 class ReviewAPITests(APITestCase):
@@ -43,7 +50,7 @@ class ReviewAPITests(APITestCase):
             {
                 "listing": self.listing.id,
                 "booking": booking.id,
-                "rating": 5,
+                **REVIEW_RATING_PAYLOAD,
                 "comment": "Great place",
             },
             format="json",
@@ -53,6 +60,7 @@ class ReviewAPITests(APITestCase):
         review = Review.objects.get()
         self.assertEqual(review.user, self.tenant)
         self.assertEqual(review.booking, booking)
+        self.assertEqual(review.rating, Decimal("8.80"))
 
     def test_user_cannot_review_someone_elses_booking(self):
         booking = self._completed_booking()
@@ -63,7 +71,7 @@ class ReviewAPITests(APITestCase):
             {
                 "listing": self.listing.id,
                 "booking": booking.id,
-                "rating": 5,
+                **REVIEW_RATING_PAYLOAD,
             },
             format="json",
         )
@@ -85,7 +93,7 @@ class ReviewAPITests(APITestCase):
             {
                 "listing": self.listing.id,
                 "booking": booking.id,
-                "rating": 5,
+                **REVIEW_RATING_PAYLOAD,
             },
             format="json",
         )
@@ -98,7 +106,7 @@ class ReviewAPITests(APITestCase):
             listing=self.listing,
             user=self.tenant,
             booking=booking,
-            rating=5,
+            **REVIEW_RATING_PAYLOAD,
         )
         self.client.force_authenticate(user=self.tenant)
 
@@ -107,7 +115,7 @@ class ReviewAPITests(APITestCase):
             {
                 "listing": self.listing.id,
                 "booking": booking.id,
-                "rating": 4,
+                **REVIEW_RATING_PAYLOAD,
             },
             format="json",
         )

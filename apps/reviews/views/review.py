@@ -13,7 +13,14 @@ from apps.reviews.serializers import (
 class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsReviewOwnerOrReadOnly)
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
-    filterset_fields = ("listing", "user", "rating")
+    filterset_fields = (
+        "cleanliness_rating",
+        "expectations_rating",
+        "listing",
+        "location_rating",
+        "rating",
+        "user",
+    )
     ordering_fields = ("created_at", "rating")
     ordering = ("-created_at",)
 

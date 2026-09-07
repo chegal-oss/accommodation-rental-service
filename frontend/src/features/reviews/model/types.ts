@@ -1,3 +1,11 @@
+export type ReviewRatingValue = number | string
+
+export type ReviewRatings = {
+  cleanliness_rating: number
+  expectations_rating: number
+  location_rating: number
+}
+
 export type Review = {
   id: number
   listing: number
@@ -5,15 +13,17 @@ export type Review = {
   user?: number
   user_email: string
   booking?: number
-  rating: number
+  cleanliness_rating: number
+  expectations_rating: number
+  location_rating: number
+  rating: ReviewRatingValue
   comment: string
   created_at: string
   updated_at?: string
 }
 
-export type ReviewCreateRequest = {
+export type ReviewCreateRequest = ReviewRatings & {
   listing: number
   booking: number
-  rating: number
   comment: string
 }

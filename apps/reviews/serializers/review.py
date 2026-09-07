@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.base.choices import BookingStatus
+from apps.base.constants import MAX_REVIEW_RATING, MIN_REVIEW_RATING
 from apps.reviews.models import Review
 
 
@@ -17,6 +18,9 @@ class ReviewListSerializer(serializers.ModelSerializer):
             "listing",
             "listing_title",
             "user_email",
+            "expectations_rating",
+            "cleanliness_rating",
+            "location_rating",
             "rating",
             "comment",
             "created_at",
@@ -37,6 +41,9 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
             "user",
             "user_email",
             "booking",
+            "expectations_rating",
+            "cleanliness_rating",
+            "location_rating",
             "rating",
             "comment",
             "created_at",
@@ -46,18 +53,34 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
+    cleanliness_rating = serializers.IntegerField(
+        max_value=MAX_REVIEW_RATING,
+        min_value=MIN_REVIEW_RATING,
+    )
+    expectations_rating = serializers.IntegerField(
+        max_value=MAX_REVIEW_RATING,
+        min_value=MIN_REVIEW_RATING,
+    )
+    location_rating = serializers.IntegerField(
+        max_value=MAX_REVIEW_RATING,
+        min_value=MIN_REVIEW_RATING,
+    )
+
     class Meta:
         model = Review
         fields = (
             "id",
             "listing",
             "booking",
+            "expectations_rating",
+            "cleanliness_rating",
+            "location_rating",
             "rating",
             "comment",
             "created_at",
             "updated_at",
         )
-        read_only_fields = ("id", "created_at", "updated_at")
+        read_only_fields = ("id", "rating", "created_at", "updated_at")
 
     def validate(self, attrs):
         request = self.context["request"]

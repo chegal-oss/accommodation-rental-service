@@ -238,18 +238,30 @@ msgid "You can add images only to your own listings."
 msgstr "Sie können Bilder nur zu Ihren eigenen Anzeigen hinzufügen."
 
 #: apps/reviews/models/review.py:32
+msgid "expectations rating"
+msgstr "Erwartungen erfüllt"
+
+#: apps/reviews/models/review.py:41
+msgid "cleanliness rating"
+msgstr "Sauberkeit des Objekts"
+
+#: apps/reviews/models/review.py:50
+msgid "location rating"
+msgstr "Lagekomfort"
+
+#: apps/reviews/models/review.py:59
 msgid "rating"
 msgstr "Bewertung"
 
-#: apps/reviews/models/review.py:38
+#: apps/reviews/models/review.py:66
 msgid "comment"
 msgstr "Kommentar"
 
-#: apps/reviews/models/review.py:41
+#: apps/reviews/models/review.py:69
 msgid "review"
 msgstr "Rezension"
 
-#: apps/reviews/models/review.py:42
+#: apps/reviews/models/review.py:70
 msgid "reviews"
 msgstr "Rezensionen"
 

@@ -8,7 +8,7 @@ import type { Booking } from '@/features/bookings/model/types'
 import { createReview, deleteReview, getListingReviews, updateReview } from '@/features/reviews/api/reviewsApi'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewForm } from '@/features/reviews/components/ReviewForm'
-import type { Review } from '@/features/reviews/model/types'
+import type { Review, ReviewRatings } from '@/features/reviews/model/types'
 import { useAuth } from '@/features/auth/model/useAuth'
 
 type ListingReviewsSectionProps = {
@@ -42,7 +42,7 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     isAuthenticated,
   })
 
-  async function handleReviewSubmit(rating: number, comment: string) {
+  async function handleReviewSubmit(ratings: ReviewRatings, comment: string) {
     if (!eligibleBooking) {
       return
     }
@@ -55,7 +55,7 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
         booking: eligibleBooking.id,
         comment,
         listing: listingId,
-        rating,
+        ...ratings,
       })
       await reviewsQuery.refetch()
     } catch (requestError) {
@@ -65,7 +65,7 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     }
   }
 
-  async function handleReviewUpdate(rating: number, comment: string) {
+  async function handleReviewUpdate(ratings: ReviewRatings, comment: string) {
     if (!editingReview) {
       return
     }
@@ -74,7 +74,7 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
     setIsSubmitting(true)
 
     try {
-      await updateReview(editingReview.id, { comment, rating })
+      await updateReview(editingReview.id, { comment, ...ratings })
       await reviewsQuery.refetch()
       setEditingReview(null)
     } catch (requestError) {
@@ -124,8 +124,13 @@ export function ListingReviewsSection({ listingId }: ListingReviewsSectionProps)
           <ReviewForm
             error={error}
             initialComment={editingReview.comment}
-            initialRating={editingReview.rating}
+            initialRatings={{
+              cleanliness_rating: editingReview.cleanliness_rating,
+              expectations_rating: editingReview.expectations_rating,
+              location_rating: editingReview.location_rating,
+            }}
             isSubmitting={isSubmitting}
+            key={editingReview.id}
             onSubmit={handleReviewUpdate}
             submitLabel={t('reviews.update')}
           />
