@@ -1,8 +1,9 @@
-import { BedDouble, Eye, MapPin, Star } from 'lucide-react'
+import { BedDouble, Eye, MapPin, MessageSquare, Star } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { formatListingLocation } from '@/features/listings/lib/formatListingLocation'
+import { formatListingRating } from '@/features/listings/lib/formatListingRating'
 import type { ListingListItem } from '@/features/listings/model/types'
 
 type ListingCardProps = {
@@ -18,6 +19,7 @@ export function ListingCard({ actions, listing }: ListingCardProps) {
     style: 'currency',
   }).format(Number(listing.price))
   const location = formatListingLocation(listing)
+  const rating = formatListingRating(listing.average_rating)
 
   return (
     <article className="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
@@ -39,18 +41,22 @@ export function ListingCard({ actions, listing }: ListingCardProps) {
           <h2 className="line-clamp-2 min-h-14 text-lg font-semibold leading-tight text-slate-950">{listing.title}</h2>
         </div>
 
-        <div className="flex items-center justify-between gap-3 text-sm text-slate-600">
+        <div className="grid grid-cols-2 gap-3 text-sm text-slate-600">
           <span className="inline-flex items-center gap-1.5">
             <BedDouble size={16} aria-hidden="true" />
             {listing.rooms} {t('common.beds')}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Eye size={16} aria-hidden="true" />
-            {listing.views_count}
+            <Star size={16} aria-hidden="true" />
+            {rating}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <Star size={16} aria-hidden="true" />
+            <MessageSquare size={16} aria-hidden="true" />
             {listing.reviews_count}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Eye size={16} aria-hidden="true" />
+            {listing.views_count}
           </span>
         </div>
 

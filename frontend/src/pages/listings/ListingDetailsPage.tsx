@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, BedDouble, Eye, Pencil, Star } from 'lucide-react'
+import { ArrowLeft, BedDouble, Eye, MessageSquare, Pencil, Star } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +12,7 @@ import { BookingRequestForm } from '@/features/bookings/components/BookingReques
 import { BookingSummaryCard } from '@/features/bookings/components/BookingSummaryCard'
 import type { Booking } from '@/features/bookings/model/types'
 import { formatListingLocation } from '@/features/listings/lib/formatListingLocation'
+import { formatListingRating } from '@/features/listings/lib/formatListingRating'
 import { ListingReviewsSection } from '@/features/reviews/components/ListingReviewsSection'
 import { formatMoney } from '@/shared/lib/formatMoney'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
@@ -48,6 +49,7 @@ export function ListingDetailsPage() {
   }
   const price = formatMoney(listing.price)
   const location = formatListingLocation(listing)
+  const rating = formatListingRating(listing.average_rating)
   const galleryImages = listing.images.length
     ? listing.images.map((image) => image.image)
     : [
@@ -149,7 +151,7 @@ export function ListingDetailsPage() {
           <div className="text-2xl font-semibold text-slate-950">
             {price} <span className="text-sm font-normal text-slate-500">/ {t('common.night')}</span>
           </div>
-          <div className="mt-5 grid grid-cols-3 gap-3 text-sm text-slate-600">
+          <div className="mt-5 grid grid-cols-2 gap-3 text-sm text-slate-600">
             <span className="inline-flex items-center gap-1.5">
               <BedDouble size={16} aria-hidden="true" />
               {listing.rooms}
@@ -160,6 +162,10 @@ export function ListingDetailsPage() {
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Star size={16} aria-hidden="true" />
+              {rating}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <MessageSquare size={16} aria-hidden="true" />
               {listing.reviews_count}
             </span>
           </div>

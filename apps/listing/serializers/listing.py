@@ -5,6 +5,12 @@ from apps.listing.serializers.listing_image import ListingImageSerializer
 
 
 class ListingListSerializer(serializers.ModelSerializer):
+    average_rating = serializers.DecimalField(
+        allow_null=True,
+        decimal_places=2,
+        max_digits=4,
+        read_only=True,
+    )
     cover_image = serializers.SerializerMethodField()
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
     views_count = serializers.IntegerField(read_only=True, default=0)
@@ -24,6 +30,7 @@ class ListingListSerializer(serializers.ModelSerializer):
             "housing_type",
             "is_active",
             "cover_image",
+            "average_rating",
             "views_count",
             "reviews_count",
             "created_at",
@@ -46,6 +53,12 @@ class ListingListSerializer(serializers.ModelSerializer):
 
 
 class ListingDetailSerializer(serializers.ModelSerializer):
+    average_rating = serializers.DecimalField(
+        allow_null=True,
+        decimal_places=2,
+        max_digits=4,
+        read_only=True,
+    )
     images = ListingImageSerializer(many=True, read_only=True)
     owner_email = serializers.EmailField(source="owner.email", read_only=True)
     views_count = serializers.IntegerField(read_only=True, default=0)
@@ -67,6 +80,7 @@ class ListingDetailSerializer(serializers.ModelSerializer):
             "housing_type",
             "is_active",
             "images",
+            "average_rating",
             "views_count",
             "reviews_count",
             "created_at",
@@ -77,6 +91,7 @@ class ListingDetailSerializer(serializers.ModelSerializer):
             "owner",
             "owner_email",
             "images",
+            "average_rating",
             "views_count",
             "reviews_count",
             "created_at",

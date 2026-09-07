@@ -21,6 +21,7 @@ export type ListingListItem = {
   rooms: number
   housing_type: HousingType
   is_active: boolean
+  average_rating?: string | null
   views_count: number
   reviews_count: number
   created_at: string

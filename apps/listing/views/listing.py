@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import Avg, Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -38,6 +38,7 @@ class ListingViewSet(viewsets.ModelViewSet):
             Listing.objects.select_related("owner")
             .prefetch_related("images")
             .annotate(
+                average_rating=Avg("reviews__rating"),
                 views_count=Count("views", distinct=True),
                 reviews_count=Count("reviews", distinct=True),
             )
