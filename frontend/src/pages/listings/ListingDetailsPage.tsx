@@ -5,7 +5,6 @@ import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getListingDetails } from '@/features/listings/api/listingsApi'
 import { ImageLightbox } from '@/features/listings/components/ImageLightbox'
-import { demoListings } from '@/features/listings/model/demoListings'
 import { useAuth } from '@/features/auth/model/useAuth'
 import { cancelBooking, createBooking, getMyBookings } from '@/features/bookings/api/bookingsApi'
 import { BookingRequestForm } from '@/features/bookings/components/BookingRequestForm'
@@ -34,30 +33,30 @@ export function ListingDetailsPage() {
     queryKey: ['listing', listingId],
   })
   const tenantBookingsQuery = useQuery({
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && Boolean(listingQuery.data),
     queryFn: getMyBookings,
     queryKey: ['bookings', 'mine', 'listing-detail'],
   })
-  const fallbackListing = demoListings.find((listing) => String(listing.id) === listingId) ?? demoListings[0]
-  const listing = listingQuery.data ?? {
-    ...fallbackListing,
-    description:
-      'A comfortable property with bright rooms, practical storage and quick access to public transport, shops and parks.',
-    images: [],
-    owner: 1,
-    updated_at: fallbackListing.created_at,
+  const listing = listingQuery.data
+
+  if (listingQuery.isLoading) {
+    return <ListingDetailsSkeleton />
   }
+
+  if (!listing) {
+    return <ListingDetailsError />
+  }
+
   const price = formatMoney(listing.price)
   const location = formatListingLocation(listing)
   const rating = formatListingRating(listing.average_rating)
   const galleryImages = listing.images.length
     ? listing.images.map((image) => image.image)
-    : [
-        listing.coverImage ?? 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80',
-      ]
+    : listing.cover_image
+      ? [listing.cover_image]
+      : []
   const canRequestBooking = isAuthenticated && user?.id !== listing.owner
+  const listingIdValue = listing.id
   const listingBookings = (tenantBookingsQuery.data?.results ?? []).filter((booking) => booking.listing === listing.id)
   const activeBooking = listingBookings.find((booking) => ['pending', 'confirmed'].includes(booking.status))
   const displayedBooking = activeBooking ?? listingBookings[0]
@@ -71,7 +70,7 @@ export function ListingDetailsPage() {
     try {
       await createBooking({
         end_date: endDate,
-        listing: listing.id,
+        listing: listingIdValue,
         start_date: startDate,
       })
       setBookingSuccess(true)
@@ -119,16 +118,22 @@ export function ListingDetailsPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <button className="group overflow-hidden rounded-lg text-left sm:col-span-2 sm:row-span-2" type="button" onClick={() => setLightboxIndex(0)}>
-              <img src={galleryImages[0]} alt={listing.title} className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105 sm:h-full" />
-            </button>
-            {galleryImages.slice(1, 3).map((image, index) => (
-              <button className="group overflow-hidden rounded-lg text-left" key={image} type="button" onClick={() => setLightboxIndex(index + 1)}>
-                <img src={image} alt={listing.title} className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105" />
+          {galleryImages.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-3">
+              <button className="group overflow-hidden rounded-lg text-left sm:col-span-2 sm:row-span-2" type="button" onClick={() => setLightboxIndex(0)}>
+                <img src={galleryImages[0]} alt={listing.title} className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105 sm:h-full" />
               </button>
-            ))}
-          </div>
+              {galleryImages.slice(1, 3).map((image, index) => (
+                <button className="group overflow-hidden rounded-lg text-left" key={image} type="button" onClick={() => setLightboxIndex(index + 1)}>
+                  <img src={image} alt={listing.title} className="aspect-[16/10] w-full object-cover transition duration-300 group-hover:scale-105" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex aspect-[16/8] items-center justify-center rounded-lg border border-dashed border-stone-300 bg-stone-50 text-sm text-slate-500">
+              {t('listingImages.empty')}
+            </div>
+          )}
 
           <div className="mt-7">
             <p className="mb-2 text-sm font-medium text-emerald-700">
@@ -191,7 +196,7 @@ export function ListingDetailsPage() {
       </div>
 
       <ListingReviewsSection listingId={listing.id} />
-      <ImageLightbox images={galleryImages} index={lightboxIndex} title={listing.title} onClose={() => setLightboxIndex(null)} onIndexChange={setLightboxIndex} />
+      {galleryImages.length > 0 ? <ImageLightbox images={galleryImages} index={lightboxIndex} title={listing.title} onClose={() => setLightboxIndex(null)} onIndexChange={setLightboxIndex} /> : null}
       <ConfirmDialog
         cancelLabel={t('common.cancel')}
         confirmLabel={t('bookings.cancel')}
@@ -207,6 +212,70 @@ export function ListingDetailsPage() {
           }
         }}
       />
+    </section>
+  )
+}
+
+function ListingDetailsSkeleton() {
+  const { t } = useTranslation()
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <Link to="/listings" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-950">
+        <ArrowLeft size={16} aria-hidden="true" />
+        {t('navigation.listings')}
+      </Link>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]" aria-busy="true" aria-label={t('common.loading')}>
+        <div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="aspect-[16/10] animate-pulse rounded-lg bg-stone-200 sm:col-span-2 sm:row-span-2 sm:h-full" />
+            <div className="aspect-[16/10] animate-pulse rounded-lg bg-stone-200" />
+            <div className="aspect-[16/10] animate-pulse rounded-lg bg-stone-200" />
+          </div>
+
+          <div className="mt-7 space-y-4">
+            <div className="h-4 w-56 animate-pulse rounded bg-stone-200" />
+            <div className="h-9 w-3/4 animate-pulse rounded bg-stone-200" />
+            <div className="max-w-3xl space-y-2">
+              <div className="h-4 animate-pulse rounded bg-stone-200" />
+              <div className="h-4 w-5/6 animate-pulse rounded bg-stone-200" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-stone-200" />
+            </div>
+          </div>
+        </div>
+
+        <aside className="h-fit rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="h-8 w-32 animate-pulse rounded bg-stone-200" />
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <div className="h-5 animate-pulse rounded bg-stone-200" />
+            <div className="h-5 animate-pulse rounded bg-stone-200" />
+            <div className="h-5 animate-pulse rounded bg-stone-200" />
+            <div className="h-5 animate-pulse rounded bg-stone-200" />
+          </div>
+          <div className="mt-6 space-y-3">
+            <div className="h-12 animate-pulse rounded-md bg-stone-200" />
+            <div className="h-12 animate-pulse rounded-md bg-stone-200" />
+            <div className="h-11 animate-pulse rounded-md bg-emerald-100" />
+          </div>
+        </aside>
+      </div>
+    </section>
+  )
+}
+
+function ListingDetailsError() {
+  const { t } = useTranslation()
+
+  return (
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <Link to="/listings" className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-950">
+        <ArrowLeft size={16} aria-hidden="true" />
+        {t('navigation.listings')}
+      </Link>
+      <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+        {t('errors.requestFailed')}
+      </div>
     </section>
   )
 }
