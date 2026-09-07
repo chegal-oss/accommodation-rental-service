@@ -1,5 +1,4 @@
-import os
-
+import environ
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
@@ -8,20 +7,21 @@ class Command(BaseCommand):
     help = "Create a superuser from environment variables if it does not exist."
 
     def handle(self, *args, **options):
-        email = os.getenv("DJANGO_SUPERUSER_EMAIL", "").strip()
+        env = environ.Env()
+        email = env("DJANGO_SUPERUSER_EMAIL", default="").strip()
         if not email:
             self.stdout.write("Superuser creation skipped.")
             return
 
-        password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "")
+        password = env("DJANGO_SUPERUSER_PASSWORD", default="")
         if not password:
             raise CommandError(
                 "DJANGO_SUPERUSER_PASSWORD is required when "
                 "DJANGO_SUPERUSER_EMAIL is set.",
             )
 
-        name = os.getenv("DJANGO_SUPERUSER_NAME", "Admin").strip() or "Admin"
-        phone = os.getenv("DJANGO_SUPERUSER_PHONE", "").strip()
+        name = env("DJANGO_SUPERUSER_NAME", default="Admin").strip() or "Admin"
+        phone = env("DJANGO_SUPERUSER_PHONE", default="").strip()
 
         User = get_user_model()
         user = User.objects.filter(email=email).first()

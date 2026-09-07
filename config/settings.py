@@ -10,53 +10,43 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env")
+env = environ.Env(
+    DEBUG=(bool, True),
+    USE_X_FORWARDED_HOST=(bool, True),
+    CAPTCHA_ENABLED=(bool, False),
+    CAPTCHA_VERIFY_TIMEOUT=(int, 5),
+    USE_MYSQL=(bool, False),
+)
+environ.Env.read_env(BASE_DIR / ".env")
 FRONTEND_DIR = BASE_DIR / "frontend"
 FRONTEND_DIST_DIR = FRONTEND_DIR / "dist"
-
-
-def env_bool(name, default=False):
-    value = os.getenv(name)
-    if value is None:
-        return default
-
-    return value.lower() in ("1", "true", "yes", "on")
-
-
-def env_list(name, default=None):
-    value = os.getenv(name)
-    if not value:
-        return default or []
-
-    return [item.strip() for item in value.split(",") if item.strip()]
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-only-change-me")
+SECRET_KEY = env("SECRET_KEY", default="django-insecure-dev-only-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_bool("DEBUG", True)
+DEBUG = env.bool("DEBUG")
 
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
-CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
-USE_X_FORWARDED_HOST = env_bool("USE_X_FORWARDED_HOST", True)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+USE_X_FORWARDED_HOST = env.bool("USE_X_FORWARDED_HOST")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", not DEBUG)
-CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", not DEBUG)
+SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", default=not DEBUG)
+CSRF_COOKIE_SECURE = env.bool("CSRF_COOKIE_SECURE", default=not DEBUG)
 
-CAPTCHA_ENABLED = env_bool("CAPTCHA_ENABLED", False)
-TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")
-CAPTCHA_VERIFY_TIMEOUT = int(os.getenv("CAPTCHA_VERIFY_TIMEOUT", "5"))
+CAPTCHA_ENABLED = env.bool("CAPTCHA_ENABLED")
+TURNSTILE_SECRET_KEY = env("TURNSTILE_SECRET_KEY", default="")
+CAPTCHA_VERIFY_TIMEOUT = env.int("CAPTCHA_VERIFY_TIMEOUT")
 
 
 # Application definition
@@ -114,7 +104,7 @@ TEST_RUNNER = "apps.base.test_runner.QuietRequestWarningsDiscoverRunner"
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-if env_bool("USE_MYSQL"):
+if env.bool("USE_MYSQL"):
     import pymysql
 
     pymysql.install_as_MySQLdb()
@@ -122,11 +112,11 @@ if env_bool("USE_MYSQL"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": os.getenv("MYSQL_DATABASE", "accommodation_rental_service"),
-            "USER": os.getenv("MYSQL_USER", "root"),
-            "PASSWORD": os.getenv("MYSQL_PASSWORD", ""),
-            "HOST": os.getenv("MYSQL_HOST", "127.0.0.1"),
-            "PORT": os.getenv("MYSQL_PORT", "3306"),
+            "NAME": env("MYSQL_DATABASE", default="accommodation_rental_service"),
+            "USER": env("MYSQL_USER", default="root"),
+            "PASSWORD": env("MYSQL_PASSWORD", default=""),
+            "HOST": env("MYSQL_HOST", default="127.0.0.1"),
+            "PORT": env("MYSQL_PORT", default="3306"),
             "OPTIONS": {
                 "charset": "utf8mb4",
             },
@@ -136,7 +126,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.getenv("SQLITE_DATABASE_PATH", BASE_DIR / "db.sqlite3"),
+            "NAME": env("SQLITE_DATABASE_PATH", default=str(BASE_DIR / "db.sqlite3")),
         }
     }
 
@@ -214,11 +204,11 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.ScopedRateThrottle",
     ),
     "DEFAULT_THROTTLE_RATES": {
-        "anon": os.getenv("DRF_ANON_THROTTLE_RATE", "300/hour"),
-        "user": os.getenv("DRF_USER_THROTTLE_RATE", "3000/hour"),
-        "auth_register": os.getenv("DRF_AUTH_REGISTER_THROTTLE_RATE", "20/hour"),
-        "auth_token": os.getenv("DRF_AUTH_TOKEN_THROTTLE_RATE", "30/hour"),
-        "auth_refresh": os.getenv("DRF_AUTH_REFRESH_THROTTLE_RATE", "120/hour"),
+        "anon": env("DRF_ANON_THROTTLE_RATE", default="300/hour"),
+        "user": env("DRF_USER_THROTTLE_RATE", default="3000/hour"),
+        "auth_register": env("DRF_AUTH_REGISTER_THROTTLE_RATE", default="20/hour"),
+        "auth_token": env("DRF_AUTH_TOKEN_THROTTLE_RATE", default="30/hour"),
+        "auth_refresh": env("DRF_AUTH_REFRESH_THROTTLE_RATE", default="120/hour"),
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -249,6 +239,6 @@ LOGGING = {
     },
     "root": {
         "handlers": ["console"],
-        "level": os.getenv("LOG_LEVEL", "INFO"),
+        "level": env("LOG_LEVEL", default="INFO"),
     },
 }
