@@ -4,11 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { getMySearches, getMyViews } from '@/features/analytics/api/analyticsApi'
 
-type ProfileActivityProps = {
-  className?: string
-}
-
-export function ProfileActivity({ className = '' }: ProfileActivityProps) {
+export function ProfileActivity() {
   const { t } = useTranslation()
   const searchesQuery = useQuery({
     queryFn: getMySearches,
@@ -22,7 +18,7 @@ export function ProfileActivity({ className = '' }: ProfileActivityProps) {
   const views = viewsQuery.data?.results ?? []
 
   return (
-    <div className={`grid gap-5 lg:grid-cols-2 ${className}`}>
+    <div className="grid gap-5 lg:grid-cols-2">
       <section className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-950">
           <Search size={18} aria-hidden="true" />

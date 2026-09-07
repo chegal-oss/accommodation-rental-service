@@ -1,15 +1,15 @@
-from django.db.models import Count
+from django.db.models import Avg, Count
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from apps.analytics.models import ListingView, SearchQuery
 from apps.analytics.serializers import (
     ListingViewSerializer,
-    PopularListingSerializer,
     PopularSearchQuerySerializer,
     SearchQuerySerializer,
 )
 from apps.listing.models import Listing
+from apps.listing.serializers import ListingListSerializer
 
 
 class MySearchQueriesView(generics.ListAPIView):
@@ -43,7 +43,7 @@ class PopularSearchQueriesView(generics.ListAPIView):
 
 
 class PopularListingsView(generics.ListAPIView):
-    serializer_class = PopularListingSerializer
+    serializer_class = ListingListSerializer
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
@@ -51,6 +51,7 @@ class PopularListingsView(generics.ListAPIView):
             Listing.objects.filter(is_active=True)
             .select_related("owner")
             .annotate(
+                average_rating=Avg("reviews__rating"),
                 views_count=Count("views", distinct=True),
                 reviews_count=Count("reviews", distinct=True),
             )

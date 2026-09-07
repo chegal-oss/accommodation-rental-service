@@ -10,10 +10,11 @@ import type { Review } from '@/features/reviews/model/types'
 export function ProfileReviews() {
   const { t } = useTranslation()
   const { user } = useAuth()
+  const userId = user?.id
   const reviewsQuery = useQuery({
-    enabled: Boolean(user?.id),
-    queryFn: () => getMyReviews(user?.id ?? 0),
-    queryKey: ['reviews', 'my', user?.id],
+    enabled: Boolean(userId),
+    queryFn: () => getMyReviews(userId ?? 0),
+    queryKey: ['reviews', 'my', userId],
   })
   const reviews = reviewsQuery.data?.results ?? []
 

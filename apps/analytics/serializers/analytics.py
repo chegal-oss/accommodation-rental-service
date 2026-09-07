@@ -23,7 +23,3 @@ class ListingViewSerializer(serializers.ModelSerializer):
 class PopularSearchQuerySerializer(serializers.Serializer):
     keyword = serializers.CharField()
     searches_count = serializers.IntegerField()
-
-
-class PopularListingSerializer(ListingListSerializer):
-    pass
