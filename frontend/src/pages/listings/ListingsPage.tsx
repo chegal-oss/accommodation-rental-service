@@ -9,13 +9,14 @@ import { ListingCard } from '@/features/listings/components/ListingCard'
 import { ListingCompactCard } from '@/features/listings/components/ListingCompactCard'
 import { ListingSearchPanel } from '@/features/listings/components/ListingSearchPanel'
 import { demoListings } from '@/features/listings/model/demoListings'
+import { DEFAULT_LISTING_SORT } from '@/features/listings/model/sort'
 import type { ListingFilters } from '@/features/listings/model/types'
 
 export function ListingsPage() {
   const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const initialFilters: ListingFilters = {
-    ordering: '-created_at',
+    ordering: DEFAULT_LISTING_SORT,
     search: searchParams.get('search') ?? undefined,
   }
   const [filters, setFilters] = useState<ListingFilters>(initialFilters)
@@ -38,7 +39,7 @@ export function ListingsPage() {
   const hasActiveSearch = Boolean(
     filters.search?.trim() || filters.city?.trim() || filters.postal_code?.trim() || filters.max_price || filters.min_rooms || filters.housing_type,
   )
-  const hasCustomOrdering = filters.ordering !== '-created_at'
+  const hasCustomOrdering = filters.ordering !== DEFAULT_LISTING_SORT
   const shouldShowResultsAfterSearch = hasActiveSearch || hasCustomOrdering
   const searchResultsSection = (
     <>

@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.listing.models import Listing, ListingImage
+from apps.reviews.models import Review
 from apps.users.models import User
 
 
@@ -93,6 +94,36 @@ class ListingAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["title"], "Berlin flat")
+
+    def test_listing_list_is_sorted_by_average_rating_by_default(self):
+        low_rated_listing = Listing.objects.create(
+            owner=self.landlord,
+            **self._listing_data(title="Low rated flat"),
+        )
+        high_rated_listing = Listing.objects.create(
+            owner=self.landlord,
+            **self._listing_data(title="High rated flat"),
+        )
+        Review.objects.create(
+            cleanliness_rating=6,
+            expectations_rating=6,
+            listing=low_rated_listing,
+            location_rating=6,
+            user=self.tenant,
+        )
+        Review.objects.create(
+            cleanliness_rating=10,
+            expectations_rating=10,
+            listing=high_rated_listing,
+            location_rating=10,
+            user=self.tenant,
+        )
+
+        response = self.client.get("/api/v1/listings/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["results"][0]["title"], "High rated flat")
+        self.assertEqual(response.data["results"][1]["title"], "Low rated flat")
 
     def test_landlord_can_get_own_listings(self):
         Listing.objects.create(owner=self.landlord, **self._listing_data())

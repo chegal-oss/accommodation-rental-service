@@ -1,6 +1,7 @@
 import { Hash, Search, X } from 'lucide-react'
 import { type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DEFAULT_LISTING_SORT } from '@/features/listings/model/sort'
 import type { ListingFilters } from '@/features/listings/model/types'
 
 type ListingSearchPanelProps = {
@@ -113,10 +114,11 @@ export function ListingSearchPanel({ filters, onChange, onSubmit }: ListingSearc
           <option value="room">{t('propertyTypes.room')}</option>
         </select>
         <select
-          value={filters.ordering ?? '-created_at'}
+          value={filters.ordering ?? DEFAULT_LISTING_SORT}
           onChange={(event) => applyFilters({ ...filters, ordering: event.target.value as ListingFilters['ordering'] })}
           className="input"
         >
+          <option value="-average_rating">{t('sort.ratingDesc')}</option>
           <option value="-created_at">{t('sort.newest')}</option>
           <option value="price">{t('sort.priceAsc')}</option>
           <option value="-price">{t('sort.priceDesc')}</option>

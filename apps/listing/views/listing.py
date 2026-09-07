@@ -30,8 +30,14 @@ class ListingViewSet(viewsets.ModelViewSet):
     )
     filterset_class = ListingFilter
     search_fields = ("title", "description", "city", "postal_code", "district")
-    ordering_fields = ("price", "created_at", "views_count", "reviews_count")
-    ordering = ("-created_at",)
+    ordering_fields = (
+        "average_rating",
+        "created_at",
+        "price",
+        "reviews_count",
+        "views_count",
+    )
+    ordering = ("-average_rating", "-created_at")
 
     def get_queryset(self):
         queryset = (

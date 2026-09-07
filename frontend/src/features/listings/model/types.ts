@@ -1,5 +1,5 @@
 export type HousingType = 'apartment' | 'house' | 'studio' | 'room' | 'other'
-export type ListingSort = 'created_at' | '-created_at' | 'price' | '-price' | '-views_count'
+export type ListingSort = 'created_at' | '-created_at' | 'price' | '-price' | '-average_rating' | '-views_count'
 
 export type ListingImage = {
   id: number

@@ -202,7 +202,8 @@
     "newest": "Neueste",
     "popular": "Beliebt",
     "priceAsc": "Preis: aufsteigend",
-    "priceDesc": "Preis: absteigend"
+    "priceDesc": "Preis: absteigend",
+    "ratingDesc": "Am besten bewertet"
   },
   "reviews": {
     "actions": "Bewertungsaktionen",
