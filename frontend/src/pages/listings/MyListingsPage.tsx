@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Eye, EyeOff, Pencil, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate } from 'react-router-dom'
 import { deleteListing, getMyListings, updateListing } from '@/features/listings/api/listingsApi'
@@ -38,15 +38,11 @@ export function MyListingsPage() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-7">
         <div>
           <h1 className="text-3xl font-semibold text-slate-950">{t('myListings.title')}</h1>
           <p className="mt-2 text-slate-600">{t('myListings.subtitle')}</p>
         </div>
-        <Link to="/listings/new" className="inline-flex items-center justify-center gap-2 rounded-md bg-slate-950 px-4 py-3 text-sm font-semibold text-white">
-          <Plus size={17} aria-hidden="true" />
-          {t('listings.create')}
-        </Link>
       </div>
 
       {myListingsQuery.isLoading ? <div className="mt-8 text-sm text-slate-500">{t('common.loading')}</div> : null}
