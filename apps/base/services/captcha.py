@@ -47,11 +47,3 @@ def verify_captcha(token, remote_ip=None):
         raise ValidationError(
             {"captcha_token": [_("Captcha verification failed. Please try again.")]},
         )
-
-
-def get_request_ip(request):
-    forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if forwarded_for:
-        return forwarded_for.split(",", maxsplit=1)[0].strip()
-
-    return request.META.get("REMOTE_ADDR")

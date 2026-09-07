@@ -1,7 +1,7 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.base.services.captcha import get_request_ip, verify_captcha
+from apps.base.services.captcha import verify_captcha
 from apps.users.models import User
 
 
@@ -26,7 +26,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         password = validated_data.pop("password")
         captcha_token = validated_data.pop("captcha_token", "")
         request = self.context.get("request")
-        remote_ip = get_request_ip(request) if request else None
+        remote_ip = getattr(request, "client_ip", None)
 
         verify_captcha(captcha_token, remote_ip=remote_ip)
 
