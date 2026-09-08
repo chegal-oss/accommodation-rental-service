@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,7 @@ env = environ.Env(
     USE_X_FORWARDED_HOST=(bool, True),
     CAPTCHA_ENABLED=(bool, False),
     CAPTCHA_VERIFY_TIMEOUT=(int, 5),
-    USE_MYSQL=(bool, False),
+    DATABASE_ENGINE=(str, "sqlite"),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 FRONTEND_DIR = BASE_DIR / "frontend"
@@ -105,7 +106,9 @@ TEST_RUNNER = "apps.base.test_runner.QuietRequestWarningsDiscoverRunner"
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-if env.bool("USE_MYSQL"):
+DATABASE_ENGINE = env("DATABASE_ENGINE").lower()
+
+if DATABASE_ENGINE == "mysql":
     import pymysql
 
     pymysql.install_as_MySQLdb()
@@ -123,13 +126,28 @@ if env.bool("USE_MYSQL"):
             },
         }
     }
-else:
+elif DATABASE_ENGINE in ("sqlite", "sqlite3"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": env("SQLITE_DATABASE_PATH", default=str(BASE_DIR / "db.sqlite3")),
         }
     }
+elif DATABASE_ENGINE in ("postgres", "postgresql"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DATABASE", default="accommodation_rental_service"),
+            "USER": env("POSTGRES_USER", default="postgres"),
+            "PASSWORD": env("POSTGRES_PASSWORD", default=""),
+            "HOST": env("POSTGRES_HOST", default="127.0.0.1"),
+            "PORT": env("POSTGRES_PORT", default="5432"),
+        }
+    }
+else:
+    raise ImproperlyConfigured(
+        "DATABASE_ENGINE must be one of: sqlite, mysql, postgresql."
+    )
 
 
 # Password validation

@@ -167,19 +167,31 @@ Copy `.env.example` to `.env` and adjust values if needed.
 SQLite is used by default:
 
 ```text
-USE_MYSQL=False
+DATABASE_ENGINE=sqlite
+SQLITE_DATABASE_PATH=db.sqlite3
 LOG_LEVEL=INFO
 ```
 
 To use MySQL:
 
 ```text
-USE_MYSQL=True
+DATABASE_ENGINE=mysql
 MYSQL_DATABASE=accommodation_rental_service
 MYSQL_USER=root
 MYSQL_PASSWORD=password
 MYSQL_HOST=127.0.0.1
 MYSQL_PORT=3306
+```
+
+To use PostgreSQL:
+
+```text
+DATABASE_ENGINE=postgresql
+POSTGRES_DATABASE=accommodation_rental_service
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432
 ```
 
 ## Docker Compose
@@ -188,7 +200,10 @@ Compose runs three services:
 
 - `app`: one Docker image with the React build, Django, Gunicorn, migrations and
   static collection on startup.
-- `db`: minimal MySQL 8.4 with `utf8mb4`.
+- `db`: optional MySQL 8.4 with `utf8mb4`, enabled through the `mysql` compose
+  profile.
+- `postgres`: optional PostgreSQL service, enabled through the `postgres`
+  compose profile.
 - `caddy`: public entrypoint, reverse proxying Django and serving `/static/` and
   `/media/` from shared volumes.
 
@@ -214,14 +229,25 @@ DOCKER_CAPTCHA_ENABLED=True
 DOCKER_VITE_CAPTCHA_ENABLED=True
 DOCKER_TURNSTILE_SITE_KEY=<cloudflare-turnstile-site-key>
 DOCKER_TURNSTILE_SECRET_KEY=<cloudflare-turnstile-secret-key>
-DOCKER_MYSQL_PASSWORD=<strong-password>
-DOCKER_MYSQL_ROOT_PASSWORD=<strong-root-password>
+DOCKER_DATABASE_ENGINE=sqlite
 ```
 
 Build and run:
 
 ```bash
 docker compose --env-file .env.docker up --build
+```
+
+Run with MySQL instead of SQLite:
+
+```bash
+DOCKER_DATABASE_ENGINE=mysql docker compose --env-file .env.docker --profile mysql up --build
+```
+
+Run with PostgreSQL instead of SQLite:
+
+```bash
+DOCKER_DATABASE_ENGINE=postgresql docker compose --env-file .env.docker --profile postgres up --build
 ```
 
 Useful commands:
@@ -346,8 +372,9 @@ to the server. The generated `.env.prod` file stays on the server and must not b
 committed.
 
 Production deployment uses SQLite stored in the `sqlite_data` Docker volume to
-keep the runtime footprint low on small servers. MySQL support remains available
-through `USE_MYSQL=True` and the regular `docker-compose.yml` stack.
+keep the runtime footprint low on small servers. MySQL and PostgreSQL support
+remain available through `DOCKER_DATABASE_ENGINE=mysql` or
+`DOCKER_DATABASE_ENGINE=postgresql`.
 
 The deployment workflow uploads `.env.prod`, `docker-compose.prod.yml`, and
 `docker/Caddyfile` to the server, pulls the selected image, and starts the stack:

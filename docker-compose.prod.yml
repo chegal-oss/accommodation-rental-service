@@ -10,8 +10,18 @@ services:
       USE_X_FORWARDED_HOST: ${DOCKER_USE_X_FORWARDED_HOST:-True}
       SESSION_COOKIE_SECURE: ${DOCKER_SESSION_COOKIE_SECURE:-True}
       CSRF_COOKIE_SECURE: ${DOCKER_CSRF_COOKIE_SECURE:-True}
-      USE_MYSQL: "False"
+      DATABASE_ENGINE: ${DOCKER_DATABASE_ENGINE:-sqlite}
       SQLITE_DATABASE_PATH: ${DOCKER_SQLITE_DATABASE_PATH:-/app/data/db.sqlite3}
+      MYSQL_DATABASE: ${DOCKER_MYSQL_DATABASE:-homerent}
+      MYSQL_USER: ${DOCKER_MYSQL_USER:-homerent}
+      MYSQL_PASSWORD: ${DOCKER_MYSQL_PASSWORD:-}
+      MYSQL_HOST: ${DOCKER_MYSQL_HOST:-db}
+      MYSQL_PORT: ${DOCKER_MYSQL_PORT:-3306}
+      POSTGRES_DATABASE: ${DOCKER_POSTGRES_DATABASE:-homerent}
+      POSTGRES_USER: ${DOCKER_POSTGRES_USER:-homerent}
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD:-}
+      POSTGRES_HOST: ${DOCKER_POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${DOCKER_POSTGRES_PORT:-5432}
       CAPTCHA_ENABLED: ${DOCKER_CAPTCHA_ENABLED:-True}
       TURNSTILE_SECRET_KEY: ${DOCKER_TURNSTILE_SECRET_KEY}
       CAPTCHA_VERIFY_TIMEOUT: ${DOCKER_CAPTCHA_VERIFY_TIMEOUT:-5}
@@ -30,6 +40,46 @@ services:
       - sqlite_data:/app/data
       - staticfiles:/app/staticfiles
       - media:/app/media
+
+  db:
+    image: mysql:8.4
+    profiles:
+      - mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DOCKER_MYSQL_DATABASE:-homerent}
+      MYSQL_USER: ${DOCKER_MYSQL_USER:-homerent}
+      MYSQL_PASSWORD: ${DOCKER_MYSQL_PASSWORD:-}
+      MYSQL_ROOT_PASSWORD: ${DOCKER_MYSQL_ROOT_PASSWORD:-}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  postgres:
+    image: postgres:16-alpine
+    profiles:
+      - postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DOCKER_POSTGRES_DATABASE:-homerent}
+      POSTGRES_USER: ${DOCKER_POSTGRES_USER:-homerent}
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD:-}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   caddy:
     image: caddy:2.10-alpine
@@ -50,6 +100,8 @@ services:
 
 volumes:
   sqlite_data:
+  mysql_data:
+  postgres_data:
   staticfiles:
   media:
   caddy_data:

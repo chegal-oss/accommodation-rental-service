@@ -1,14 +1,22 @@
 #!/bin/sh
 set -e
 
-if [ "${USE_MYSQL}" = "True" ] || [ "${USE_MYSQL}" = "true" ] || [ "${USE_MYSQL}" = "1" ]; then
-  python <<'PY'
+python <<'PY'
 import os
 import socket
 import time
 
-host = os.getenv("MYSQL_HOST", "db")
-port = int(os.getenv("MYSQL_PORT", "3306"))
+engine = os.getenv("DATABASE_ENGINE", "sqlite").lower()
+database_hosts = {
+    "mysql": (os.getenv("MYSQL_HOST", "db"), int(os.getenv("MYSQL_PORT", "3306"))),
+    "postgres": (os.getenv("POSTGRES_HOST", "postgres"), int(os.getenv("POSTGRES_PORT", "5432"))),
+    "postgresql": (os.getenv("POSTGRES_HOST", "postgres"), int(os.getenv("POSTGRES_PORT", "5432"))),
+}
+
+if engine not in database_hosts:
+    raise SystemExit
+
+host, port = database_hosts[engine]
 deadline = time.time() + 60
 
 while True:
@@ -20,7 +28,6 @@ while True:
             raise
         time.sleep(1)
 PY
-fi
 
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
