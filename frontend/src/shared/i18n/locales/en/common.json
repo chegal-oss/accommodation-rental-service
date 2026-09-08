@@ -130,6 +130,7 @@
   },
   "listings": {
     "create": "New listing",
+    "empty": "No listings found.",
     "featured": "Featured listings",
     "found": "{{count}} listings found",
     "searchPlaceholder": "Search by title, description or city",

@@ -26,15 +26,20 @@ async function refreshAccessToken() {
     return null
   }
 
-  const response = await apiRequest<{ access: string }>('/auth/token/refresh/', {
-    body: JSON.stringify({ refresh: refreshToken }),
-    method: 'POST',
-    skipAuth: true,
-    skipRefresh: true,
-  })
+  try {
+    const response = await apiRequest<{ access: string }>('/auth/token/refresh/', {
+      body: JSON.stringify({ refresh: refreshToken }),
+      method: 'POST',
+      skipAuth: true,
+      skipRefresh: true,
+    })
 
-  tokenStorage.setAccessToken(response.access)
-  return response.access
+    tokenStorage.setAccessToken(response.access)
+    return response.access
+  } catch {
+    tokenStorage.clear()
+    return null
+  }
 }
 
 export async function apiRequest<TResponse>(path: string, options: ApiRequestOptions = {}): Promise<TResponse> {
@@ -73,9 +78,29 @@ export async function apiRequest<TResponse>(path: string, options: ApiRequestOpt
     }
 
     tokenStorage.clear()
+
+    if (canRetryAnonymously(options)) {
+      headers.delete('Authorization')
+
+      const retryResponse = await fetch(`${env.apiBaseUrl}${path}`, {
+        ...options,
+        headers,
+      })
+
+      return handleResponse<TResponse>(retryResponse)
+    }
   }
 
   return handleResponse<TResponse>(response)
+}
+
+function canRetryAnonymously(options: ApiRequestOptions) {
+  if (options.skipAuth) {
+    return false
+  }
+
+  const method = options.method?.toUpperCase() ?? 'GET'
+  return ['GET', 'HEAD', 'OPTIONS'].includes(method)
 }
 
 async function handleResponse<TResponse>(response: Response): Promise<TResponse> {

@@ -26,7 +26,6 @@ export type ListingListItem = {
   reviews_count: number
   created_at: string
   cover_image?: string | null
-  coverImage?: string
 }
 
 export type ListingDetails = ListingListItem & {

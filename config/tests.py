@@ -43,6 +43,16 @@ class FrontendAppTests(SimpleTestCase):
         self.assertIn(b"Frontend app", b"".join(root_response.streaming_content))
         self.assertIn(b"Frontend app", b"".join(route_response.streaming_content))
 
+    def test_frontend_fallback_does_not_handle_bare_admin_path(self):
+        with TemporaryDirectory() as directory:
+            index_path = Path(directory) / "index.html"
+            index_path.write_text("<html><body>Frontend app</body></html>", encoding="utf-8")
+
+            with override_settings(FRONTEND_DIST_DIR=Path(directory)):
+                response = self.client.get("/admin")
+
+        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+
     def test_missing_frontend_build_returns_404(self):
         with TemporaryDirectory() as directory, override_settings(FRONTEND_DIST_DIR=Path(directory)):
             response = self.client.get("/")

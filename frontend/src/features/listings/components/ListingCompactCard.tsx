@@ -1,4 +1,4 @@
-import { BedDouble, Eye, MapPin } from 'lucide-react'
+import { BedDouble, Eye, Home, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { formatListingLocation } from '@/features/listings/lib/formatListingLocation'
@@ -16,12 +16,18 @@ export function ListingCompactCard({ listing }: ListingCompactCardProps) {
 
   return (
     <Link to={`/listings/${listing.id}`} className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 rounded-md border border-stone-200 bg-stone-50 p-2 hover:bg-stone-100">
-      <img
-        src={listing.cover_image ?? listing.coverImage ?? 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80'}
-        alt={listing.title}
-        className="aspect-[4/3] w-full rounded-md object-cover"
-        loading="lazy"
-      />
+      {listing.cover_image ? (
+        <img
+          src={listing.cover_image}
+          alt={listing.title}
+          className="aspect-[4/3] w-full rounded-md object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <div className="flex aspect-[4/3] w-full items-center justify-center rounded-md bg-stone-200 text-slate-400">
+          <Home size={22} aria-hidden="true" />
+        </div>
+      )}
       <div className="min-w-0 py-1">
         <h3 className="line-clamp-2 text-sm font-semibold leading-5 text-slate-950">{listing.title}</h3>
         <p className="mt-1 flex items-center gap-1.5 truncate text-xs text-slate-500">

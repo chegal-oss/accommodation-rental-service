@@ -8,7 +8,6 @@ import { getListings } from '@/features/listings/api/listingsApi'
 import { ListingCard } from '@/features/listings/components/ListingCard'
 import { ListingCompactCard } from '@/features/listings/components/ListingCompactCard'
 import { ListingSearchPanel } from '@/features/listings/components/ListingSearchPanel'
-import { demoListings } from '@/features/listings/model/demoListings'
 import { DEFAULT_LISTING_SORT } from '@/features/listings/model/sort'
 import type { ListingFilters } from '@/features/listings/model/types'
 
@@ -33,8 +32,8 @@ export function ListingsPage() {
     queryFn: getPopularListings,
     queryKey: ['analytics', 'popular-listings'],
   })
-  const listings = listingsQuery.data ? listingsQuery.data.results : demoListings
-  const listingsCount = listingsQuery.data?.count ?? listings.length
+  const listings = listingsQuery.data?.results ?? []
+  const listingsCount = listingsQuery.data?.count ?? 0
   const popularListings = popularListingsQuery.data?.results ?? []
   const hasActiveSearch = Boolean(
     filters.search?.trim() || filters.city?.trim() || filters.postal_code?.trim() || filters.max_price || filters.min_rooms || filters.housing_type,
@@ -51,11 +50,16 @@ export function ListingsPage() {
         {listingsQuery.isFetching ? <span className="text-sm text-slate-500">{t('common.loading')}</span> : null}
       </div>
 
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {listings.map((listing) => (
-          <ListingCard key={listing.id} listing={listing} />
-        ))}
-      </div>
+      {listingsQuery.isLoading ? <ListingGridSkeleton /> : null}
+      {listingsQuery.isError ? <ListingsError /> : null}
+      {!listingsQuery.isLoading && !listingsQuery.isError ? (
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {listings.length === 0 ? <ListingsEmpty /> : null}
+          {listings.map((listing) => (
+            <ListingCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      ) : null}
     </>
   )
   const featuredListingsBlock = (
@@ -67,11 +71,16 @@ export function ListingsPage() {
         </div>
         {listingsQuery.isFetching ? <span className="text-sm text-slate-500">{t('common.loading')}</span> : null}
       </div>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {listings.slice(0, 6).map((listing) => (
-          <ListingCompactCard key={listing.id} listing={listing} />
-        ))}
-      </div>
+      {listingsQuery.isLoading ? <ListingCompactGridSkeleton /> : null}
+      {listingsQuery.isError ? <ListingsError /> : null}
+      {!listingsQuery.isLoading && !listingsQuery.isError ? (
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {listings.length === 0 ? <ListingsEmpty /> : null}
+          {listings.slice(0, 6).map((listing) => (
+            <ListingCompactCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 
@@ -129,6 +138,67 @@ export function ListingsPage() {
 
         {shouldShowResultsAfterSearch ? null : featuredListingsBlock}
       </section>
+    </div>
+  )
+}
+
+function ListingGridSkeleton() {
+  return (
+    <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+      {Array.from({ length: 6 }, (_, index) => (
+        <div className="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm" key={index}>
+          <div className="aspect-[4/3] animate-pulse bg-stone-200" />
+          <div className="space-y-4 p-4">
+            <div className="h-4 w-2/3 animate-pulse rounded bg-stone-200" />
+            <div className="h-12 animate-pulse rounded bg-stone-200" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="h-4 animate-pulse rounded bg-stone-200" />
+              <div className="h-4 animate-pulse rounded bg-stone-200" />
+              <div className="h-4 animate-pulse rounded bg-stone-200" />
+              <div className="h-4 animate-pulse rounded bg-stone-200" />
+            </div>
+            <div className="h-12 animate-pulse rounded bg-stone-200" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ListingCompactGridSkeleton() {
+  return (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3" aria-busy="true">
+      {Array.from({ length: 6 }, (_, index) => (
+        <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3 rounded-md border border-stone-200 bg-stone-50 p-2" key={index}>
+          <div className="aspect-[4/3] animate-pulse rounded-md bg-stone-200" />
+          <div className="space-y-2 py-1">
+            <div className="h-4 animate-pulse rounded bg-stone-200" />
+            <div className="h-3 w-2/3 animate-pulse rounded bg-stone-200" />
+            <div className="h-3 w-1/2 animate-pulse rounded bg-stone-200" />
+            <div className="h-4 w-1/3 animate-pulse rounded bg-stone-200" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ListingsError() {
+  const { t } = useTranslation()
+
+  return (
+    <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      {t('errors.requestFailed')}
+    </div>
+  )
+}
+
+function ListingsEmpty() {
+  const { t } = useTranslation()
+
+  return (
+    <div className="rounded-lg border border-dashed border-stone-300 bg-stone-50 p-5 text-sm text-slate-500 sm:col-span-2 lg:col-span-3">
+      {t('listings.empty')}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { BedDouble, Eye, MapPin, MessageSquare, Star } from 'lucide-react'
+import { BedDouble, Eye, Home, MapPin, MessageSquare, Star } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -24,12 +24,18 @@ export function ListingCard({ actions, listing }: ListingCardProps) {
   return (
     <article className="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
       <Link to={`/listings/${listing.id}`} className="block aspect-[4/3] overflow-hidden bg-stone-200" aria-label={t('common.viewDetails')}>
-        <img
-          src={listing.cover_image ?? listing.coverImage ?? 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'}
-          alt={listing.title}
-          className="size-full object-cover transition duration-300 hover:scale-105"
-          loading="lazy"
-        />
+        {listing.cover_image ? (
+          <img
+            src={listing.cover_image}
+            alt={listing.title}
+            className="size-full object-cover transition duration-300 hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center bg-stone-100 text-slate-400">
+            <Home size={36} aria-hidden="true" />
+          </div>
+        )}
       </Link>
 
       <div className="space-y-4 p-4">

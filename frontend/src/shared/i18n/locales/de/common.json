@@ -130,6 +130,7 @@
   },
   "listings": {
     "create": "Neue Anzeige",
+    "empty": "Keine Anzeigen gefunden.",
     "featured": "Empfohlene Anzeigen",
     "found": "{{count}} Anzeigen gefunden",
     "searchPlaceholder": "Nach Titel, Beschreibung oder Stadt suchen",

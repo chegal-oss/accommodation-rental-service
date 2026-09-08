@@ -16,6 +16,7 @@ from apps.bookings.serializers import (
     BookingDetailSerializer,
     BookingListSerializer,
 )
+from apps.bookings.services import create_booking
 
 
 class BookingViewSet(viewsets.ModelViewSet):
@@ -52,8 +53,16 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         return BookingDetailSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(tenant=self.request.user)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        booking = create_booking(tenant=request.user, **serializer.validated_data)
+        response_serializer = BookingCreateSerializer(
+            booking,
+            context=self.get_serializer_context(),
+        )
+
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=["get"], url_path="my")
     def my_bookings(self, request):
