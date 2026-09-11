@@ -140,8 +140,16 @@ class ListingViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(listings)
 
         if page is not None:
-            serializer = ListingListSerializer(page, many=True)
+            serializer = ListingListSerializer(
+                page,
+                many=True,
+                context=self.get_serializer_context(),
+            )
             return self.get_paginated_response(serializer.data)
 
-        serializer = ListingListSerializer(listings, many=True)
+        serializer = ListingListSerializer(
+            listings,
+            many=True,
+            context=self.get_serializer_context(),
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)

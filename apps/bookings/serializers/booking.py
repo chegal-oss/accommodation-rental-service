@@ -1,10 +1,6 @@
-from datetime import timedelta
-
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from apps.base.choices import BookingStatus
 from apps.bookings.models import Booking
 from apps.users.models import User
 
@@ -16,14 +12,11 @@ class BookingPriceAndContactMixin(serializers.ModelSerializer):
         decimal_places=2,
         read_only=True,
     )
-    nights = serializers.SerializerMethodField()
+    nights = serializers.IntegerField(read_only=True)
     total_price = serializers.SerializerMethodField()
     contact_name = serializers.SerializerMethodField()
     contact_email = serializers.SerializerMethodField()
     contact_phone = serializers.SerializerMethodField()
-
-    def get_nights(self, booking: Booking) -> int:
-        return booking.nights
 
     def get_total_price(self, booking: Booking) -> str:
         return str(booking.calculate_total_price())
@@ -111,7 +104,7 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         decimal_places=2,
         read_only=True,
     )
-    nights = serializers.SerializerMethodField()
+    nights = serializers.IntegerField(read_only=True)
     total_price = serializers.SerializerMethodField()
 
     class Meta:
@@ -138,9 +131,6 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
-    def get_nights(self, booking: Booking) -> int:
-        return booking.nights
-
     def get_total_price(self, booking: Booking) -> str:
         return str(booking.calculate_total_price())
 
@@ -154,36 +144,10 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         return listing
 
     def validate(self, attrs):
-        listing = attrs.get("listing")
         start_date = attrs.get("start_date")
         end_date = attrs.get("end_date")
 
         if start_date and end_date and start_date >= end_date:
             raise serializers.ValidationError(_("End date must be later than start date."))
-
-        if not listing or not start_date or not end_date:
-            return attrs
-
-        max_booking_date = timezone.localdate() + timedelta(
-            days=listing.max_booking_days_ahead
-        )
-
-        if start_date > max_booking_date or end_date > max_booking_date:
-            raise serializers.ValidationError(
-                _("Booking dates must be within %(days)s days from today.")
-                % {"days": listing.max_booking_days_ahead}
-            )
-
-        overlapping_bookings = Booking.objects.filter(
-            listing=listing,
-            start_date__lt=end_date,
-            end_date__gt=start_date,
-            status__in=(BookingStatus.PENDING, BookingStatus.CONFIRMED),
-        )
-
-        if overlapping_bookings.exists():
-            raise serializers.ValidationError(
-                _("This listing is already booked for these dates.")
-            )
 
         return attrs

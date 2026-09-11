@@ -93,10 +93,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.status = BookingStatus.CONFIRMED
         booking.save(update_fields=("status", "updated_at"))
 
-        return Response(
-            BookingDetailSerializer(booking).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(self.get_serializer(booking).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="reject")
     def reject(self, request, pk=None):
@@ -107,10 +104,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.status = BookingStatus.REJECTED
         booking.save(update_fields=("status", "updated_at"))
 
-        return Response(
-            BookingDetailSerializer(booking).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(self.get_serializer(booking).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], url_path="cancel")
     def cancel(self, request, pk=None):
@@ -130,10 +124,7 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.status = BookingStatus.CANCELLED
         booking.save(update_fields=("status", "updated_at"))
 
-        return Response(
-            BookingDetailSerializer(booking).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(self.get_serializer(booking).data, status=status.HTTP_200_OK)
 
     def _ensure_listing_owner(self, request, booking):
         if booking.listing.owner_id != request.user.id:
