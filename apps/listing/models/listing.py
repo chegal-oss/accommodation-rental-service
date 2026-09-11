@@ -1,10 +1,15 @@
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.base import TimeStampModel
 from apps.base.choices import HousingType
+from apps.base.constants import (
+    DEFAULT_MAX_BOOKING_DAYS_AHEAD,
+    MAX_MAX_BOOKING_DAYS_AHEAD,
+    MIN_MAX_BOOKING_DAYS_AHEAD,
+)
 
 
 class Listing(TimeStampModel):
@@ -26,6 +31,14 @@ class Listing(TimeStampModel):
         validators=[MinValueValidator(0)],
     )
     rooms = models.PositiveSmallIntegerField(_("rooms"), validators=[MinValueValidator(1)])
+    max_booking_days_ahead = models.PositiveSmallIntegerField(
+        _("maximum booking days ahead"),
+        default=DEFAULT_MAX_BOOKING_DAYS_AHEAD,
+        validators=[
+            MinValueValidator(MIN_MAX_BOOKING_DAYS_AHEAD),
+            MaxValueValidator(MAX_MAX_BOOKING_DAYS_AHEAD),
+        ],
+    )
     housing_type = models.CharField(
         _("housing type"),
         max_length=20,

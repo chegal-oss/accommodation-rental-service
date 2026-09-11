@@ -6,15 +6,23 @@ import { formatMoney } from '@/shared/lib/formatMoney'
 type BookingRequestFormProps = {
   error: string | null
   isSubmitting: boolean
+  maxBookingDaysAhead: number
   pricePerNight: number | string
   onSubmit: (startDate: string, endDate: string) => Promise<void>
 }
 
-export function BookingRequestForm({ error, isSubmitting, pricePerNight, onSubmit }: BookingRequestFormProps) {
+export function BookingRequestForm({
+  error,
+  isSubmitting,
+  maxBookingDaysAhead,
+  pricePerNight,
+  onSubmit,
+}: BookingRequestFormProps) {
   const { t } = useTranslation()
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const today = new Date().toISOString().slice(0, 10)
+  const maxBookingDate = getDateAfterDays(maxBookingDaysAhead)
   const nights = getBookingNights(startDate, endDate)
   const totalPrice = nights > 0 ? Number(pricePerNight) * nights : 0
 
@@ -30,14 +38,33 @@ export function BookingRequestForm({ error, isSubmitting, pricePerNight, onSubmi
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1.5 block text-sm font-medium text-slate-700">{t('bookings.startDate')}</span>
-          <input className="input" min={today} required type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
+          <input
+            className="input"
+            max={maxBookingDate}
+            min={today}
+            required
+            type="date"
+            value={startDate}
+            onChange={(event) => setStartDate(event.target.value)}
+          />
         </label>
 
         <label className="block">
           <span className="mb-1.5 block text-sm font-medium text-slate-700">{t('bookings.endDate')}</span>
-          <input className="input" min={startDate || today} required type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} />
+          <input
+            className="input"
+            max={maxBookingDate}
+            min={startDate || today}
+            required
+            type="date"
+            value={endDate}
+            onChange={(event) => setEndDate(event.target.value)}
+          />
         </label>
       </div>
+      <p className="text-xs leading-5 text-slate-500">
+        {t('bookings.bookingWindowHint', { count: maxBookingDaysAhead })}
+      </p>
 
       {nights > 0 ? (
         <div className="rounded-md border border-emerald-100 bg-emerald-50 p-3">
@@ -60,6 +87,13 @@ export function BookingRequestForm({ error, isSubmitting, pricePerNight, onSubmi
       </button>
     </form>
   )
+}
+
+function getDateAfterDays(days: number) {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+
+  return date.toISOString().slice(0, 10)
 }
 
 function getBookingNights(startDate: string, endDate: string) {

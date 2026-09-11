@@ -1,10 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, Euro, Hash, ImagePlus, MapPin, Trash2, Type } from 'lucide-react'
+import { CalendarDays, Check, Euro, Hash, ImagePlus, MapPin, Trash2, Type } from 'lucide-react'
 import { type ChangeEvent, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-import { MAX_LISTING_IMAGES } from '@/features/listings/model/constants'
+import {
+  DEFAULT_MAX_BOOKING_DAYS_AHEAD,
+  MAX_LISTING_IMAGES,
+  MAX_MAX_BOOKING_DAYS_AHEAD,
+  MIN_MAX_BOOKING_DAYS_AHEAD,
+} from '@/features/listings/model/constants'
 import type { ListingCreateRequest, ListingImage, ListingImageUpload } from '@/features/listings/model/types'
 
 type ListingFormValues = ListingCreateRequest
@@ -30,6 +35,7 @@ const defaultValues: ListingFormValues = {
   postal_code: '',
   price: '',
   rooms: '',
+  max_booking_days_ahead: String(DEFAULT_MAX_BOOKING_DAYS_AHEAD),
   title: '',
 }
 
@@ -55,6 +61,17 @@ export function ListingForm({
     postal_code: z.string().optional(),
     price: z.string().min(1, t('validation.required')),
     rooms: z.string().regex(/^[1-9]\d*$/, t('validation.integerRooms')),
+    max_booking_days_ahead: z
+      .string()
+      .regex(/^[1-9]\d*$/, t('validation.integerDays'))
+      .refine(
+        (value) => Number(value) >= MIN_MAX_BOOKING_DAYS_AHEAD,
+        t('validation.minBookingWindow', { count: MIN_MAX_BOOKING_DAYS_AHEAD }),
+      )
+      .refine(
+        (value) => Number(value) <= MAX_MAX_BOOKING_DAYS_AHEAD,
+        t('validation.maxBookingWindow', { count: MAX_MAX_BOOKING_DAYS_AHEAD }),
+      ),
     title: z.string().min(3, t('validation.minTitle')),
   })
   const previewUrls = useMemo(() => images.map((image) => (image ? URL.createObjectURL(image) : null)), [images])
@@ -185,6 +202,26 @@ export function ListingForm({
           <span className="mb-1.5 block text-sm font-medium text-slate-700">{t('listingForm.rooms')}</span>
           <input className="input" inputMode="numeric" min="1" step="1" type="number" {...register('rooms')} />
           {errors.rooms ? <span className="form-error">{errors.rooms.message}</span> : null}
+        </label>
+
+        <label className="block">
+          <span className="mb-1.5 block text-sm font-medium text-slate-700">{t('listingForm.maxBookingDaysAhead')}</span>
+          <div className="relative">
+            <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={17} aria-hidden="true" />
+            <input
+              className="input pl-10"
+              inputMode="numeric"
+              max={MAX_MAX_BOOKING_DAYS_AHEAD}
+              min={MIN_MAX_BOOKING_DAYS_AHEAD}
+              step="1"
+              type="number"
+              {...register('max_booking_days_ahead')}
+            />
+          </div>
+          <span className="mt-1 block text-xs leading-5 text-slate-500">
+            {t('listingForm.maxBookingDaysAheadHint', { count: MAX_MAX_BOOKING_DAYS_AHEAD })}
+          </span>
+          {errors.max_booking_days_ahead ? <span className="form-error">{errors.max_booking_days_ahead.message}</span> : null}
         </label>
 
         <label className="block">

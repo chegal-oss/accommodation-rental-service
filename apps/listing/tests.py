@@ -36,9 +36,11 @@ class ListingAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["postal_code"], "10115")
+        self.assertEqual(response.data["max_booking_days_ahead"], 180)
         listing = Listing.objects.get()
         self.assertEqual(listing.owner, self.landlord)
         self.assertEqual(listing.postal_code, "10115")
+        self.assertEqual(listing.max_booking_days_ahead, 180)
 
     def test_anonymous_user_cannot_create_listing(self):
 
@@ -205,6 +207,7 @@ class ListingAPITests(APITestCase):
             "district": "Mitte",
             "price": "1200.00",
             "rooms": 2,
+            "max_booking_days_ahead": 180,
             "housing_type": "apartment",
             "is_active": True,
         }

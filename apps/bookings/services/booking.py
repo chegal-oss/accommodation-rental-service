@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.db import transaction
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
@@ -32,6 +35,16 @@ def create_booking(*, tenant, listing, start_date, end_date):
 
 
 def _validate_booking_dates_are_available(*, listing, start_date, end_date):
+    max_booking_date = timezone.localdate() + timedelta(
+        days=listing.max_booking_days_ahead
+    )
+
+    if start_date > max_booking_date or end_date > max_booking_date:
+        raise ValidationError(
+            _("Booking dates must be within %(days)s days from today.")
+            % {"days": listing.max_booking_days_ahead}
+        )
+
     overlapping_bookings = Booking.objects.filter(
         listing=listing,
         start_date__lt=end_date,

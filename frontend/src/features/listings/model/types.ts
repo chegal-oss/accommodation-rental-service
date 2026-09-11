@@ -19,6 +19,7 @@ export type ListingListItem = {
   district: string
   price: string
   rooms: number
+  max_booking_days_ahead: number
   housing_type: HousingType
   is_active: boolean
   average_rating?: string | null
@@ -56,6 +57,7 @@ export type ListingCreateRequest = {
   district?: string
   price: string
   rooms: string
+  max_booking_days_ahead: string
   housing_type: HousingType
   is_active: boolean
 }

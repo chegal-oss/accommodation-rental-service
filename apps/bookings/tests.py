@@ -171,6 +171,23 @@ class BookingAPITests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_booking_after_listing_window_is_rejected(self):
+        self.listing.max_booking_days_ahead = 7
+        self.listing.save(update_fields=("max_booking_days_ahead", "updated_at"))
+        self.client.force_authenticate(user=self.tenant)
+
+        response = self.client.post(
+            "/api/v1/bookings/",
+            {
+                "listing": self.listing.id,
+                "start_date": timezone.localdate() + timedelta(days=8),
+                "end_date": timezone.localdate() + timedelta(days=10),
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def _booking_payload(self):
         start_date = timezone.localdate() + timedelta(days=10)
         end_date = start_date + timedelta(days=3)

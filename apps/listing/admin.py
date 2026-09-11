@@ -20,6 +20,7 @@ class ListingAdmin(admin.ModelAdmin):
         "postal_code",
         "price",
         "rooms",
+        "max_booking_days_ahead",
         "housing_type",
         "is_active",
         "created_at",

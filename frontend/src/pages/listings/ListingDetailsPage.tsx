@@ -183,7 +183,13 @@ export function ListingDetailsPage() {
           ) : isBookingLookupLoading ? (
             <div className="mt-6 text-sm text-slate-500">{t('common.loading')}</div>
           ) : canRequestBooking ? (
-            <BookingRequestForm error={bookingError} isSubmitting={isBookingSubmitting} pricePerNight={listing.price} onSubmit={handleBookingSubmit} />
+            <BookingRequestForm
+              error={bookingError}
+              isSubmitting={isBookingSubmitting}
+              maxBookingDaysAhead={listing.max_booking_days_ahead}
+              pricePerNight={listing.price}
+              onSubmit={handleBookingSubmit}
+            />
           ) : (
             <>
               {bookingError ? <p className="mt-3 text-sm text-red-700">{bookingError}</p> : null}

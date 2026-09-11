@@ -136,6 +136,10 @@ msgstr "Buchung"
 msgid "bookings"
 msgstr "Buchungen"
 
+#: apps/listing/models/listing.py:35
+msgid "maximum booking days ahead"
+msgstr "maximales Buchungsfenster in Tagen"
+
 #: apps/bookings/models/booking.py:47 apps/bookings/serializers/booking.py:75
 msgid "End date must be later than start date."
 msgstr "Das Enddatum muss nach dem Startdatum liegen."
@@ -143,6 +147,11 @@ msgstr "Das Enddatum muss nach dem Startdatum liegen."
 #: apps/bookings/models/booking.py:65 apps/bookings/serializers/booking.py:89
 msgid "This listing is already booked for these dates."
 msgstr "Diese Anzeige ist für diese Daten bereits gebucht."
+
+#: apps/bookings/serializers/booking.py:173 apps/bookings/services/booking.py:44
+#, python-format
+msgid "Booking dates must be within %(days)s days from today."
+msgstr "Die Buchungsdaten müssen innerhalb von %(days)s Tagen ab heute liegen."
 
 #: apps/bookings/serializers/booking.py:62
 msgid "This listing is not active."

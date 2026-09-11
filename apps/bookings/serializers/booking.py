@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
@@ -160,6 +163,16 @@ class BookingCreateSerializer(serializers.ModelSerializer):
 
         if not listing or not start_date or not end_date:
             return attrs
+
+        max_booking_date = timezone.localdate() + timedelta(
+            days=listing.max_booking_days_ahead
+        )
+
+        if start_date > max_booking_date or end_date > max_booking_date:
+            raise serializers.ValidationError(
+                _("Booking dates must be within %(days)s days from today.")
+                % {"days": listing.max_booking_days_ahead}
+            )
 
         overlapping_bookings = Booking.objects.filter(
             listing=listing,

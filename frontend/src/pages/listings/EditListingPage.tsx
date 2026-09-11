@@ -35,6 +35,7 @@ export function EditListingPage() {
       postal_code: listingQuery.data.postal_code,
       price: listingQuery.data.price,
       rooms: String(listingQuery.data.rooms),
+      max_booking_days_ahead: String(listingQuery.data.max_booking_days_ahead),
       title: listingQuery.data.title,
     }
   }, [listingQuery.data])

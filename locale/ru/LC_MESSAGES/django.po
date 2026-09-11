@@ -138,6 +138,10 @@ msgstr "бронирование"
 msgid "bookings"
 msgstr "бронирования"
 
+#: apps/listing/models/listing.py:35
+msgid "maximum booking days ahead"
+msgstr "максимальное окно бронирования в днях"
+
 #: apps/bookings/models/booking.py:47 apps/bookings/serializers/booking.py:75
 msgid "End date must be later than start date."
 msgstr "Дата окончания должна быть позже даты начала."
@@ -145,6 +149,11 @@ msgstr "Дата окончания должна быть позже даты н
 #: apps/bookings/models/booking.py:65 apps/bookings/serializers/booking.py:89
 msgid "This listing is already booked for these dates."
 msgstr "Это объявление уже забронировано на эти даты."
+
+#: apps/bookings/serializers/booking.py:173 apps/bookings/services/booking.py:44
+#, python-format
+msgid "Booking dates must be within %(days)s days from today."
+msgstr "Даты бронирования должны быть в пределах %(days)s дней от текущей даты."
 
 #: apps/bookings/serializers/booking.py:62
 msgid "This listing is not active."
